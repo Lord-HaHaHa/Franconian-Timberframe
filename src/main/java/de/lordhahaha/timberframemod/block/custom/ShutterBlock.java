@@ -143,10 +143,17 @@ public class ShutterBlock extends Block{
         Direction facing = blockState.getValue(FACING);
 
         // Test Left / Right neighbour
-        if(blockState.getValue(NEIGHBOUR) == Neighbour.LEFT)
+        if(blockState.getValue(NEIGHBOUR) == Neighbour.LEFT) {
             neighbourShutterPos = getNeighbourShutterPosition(blockPos, facing);
+            BlockState neighbourShutter = level.getBlockState(neighbourShutterPos);
+            if(neighbourShutter.getBlock() == blockState.getBlock() &&
+                blockState.getValue(NEIGHBOUR) != neighbourShutter.getValue(NEIGHBOUR)){
+                updateShutter(neighbourShutter, level, neighbourShutterPos, !neighbourShutter.getValue(OPEN), blockState.getValue(FACING));
+                return;
+            }
+        }
 
-        if(blockState.getValue(NEIGHBOUR) == Neighbour.RIGHT)
+        if(blockState.getValue(NEIGHBOUR) == Neighbour.RIGHT){
             neighbourShutterPos = getNeighbourShutterPosition(getNeighbourShutterPosition(blockPos, facing),facing);
 
         BlockState neighbourShutter = level.getBlockState(neighbourShutterPos);
@@ -155,11 +162,16 @@ public class ShutterBlock extends Block{
         }
 
         facing = facing.getOpposite();
-        if(blockState.getValue(NEIGHBOUR) == Neighbour.LEFT)
-            neighbourShutterPos = getNeighbourShutterPosition(getNeighbourShutterPosition(blockPos, facing),facing);
-
-        if(blockState.getValue(NEIGHBOUR) == Neighbour.RIGHT)
+        if(blockState.getValue(NEIGHBOUR) == Neighbour.LEFT) {
+            neighbourShutterPos = getNeighbourShutterPosition(getNeighbourShutterPosition(blockPos, facing), facing);
             neighbourShutterPos = getNeighbourShutterPosition(blockPos, facing);
+            BlockState neighbourShutter = level.getBlockState(neighbourShutterPos);
+            if(neighbourShutter.getBlock() == blockState.getBlock() &&
+                    blockState.getValue(NEIGHBOUR) == neighbourShutter.getValue(NEIGHBOUR)){
+                updateShutter(neighbourShutter, level, neighbourShutterPos, !neighbourShutter.getValue(OPEN), blockState.getValue(FACING));
+                return;
+            }
+        }
 
         neighbourShutter = level.getBlockState(neighbourShutterPos);
         if(neighbourShutter.getBlock() == blockState.getBlock()){
