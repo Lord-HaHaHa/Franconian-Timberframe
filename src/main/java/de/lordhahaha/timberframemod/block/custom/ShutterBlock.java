@@ -259,11 +259,13 @@ public class ShutterBlock extends Block{
         BlockPos blockBelowPos = blockPos.below();
         BlockState blockBelowState = level.getBlockState(blockBelowPos);
         if(blockBelowState.getBlock() == blockState.getBlock()){
-            level.setBlockAndUpdate(blockBelowPos, blockBelowState.setValue(HAS_TOP, true));
-            blockBelowPos = getConnectedShutter(blockBelowPos, blockBelowState);
-            blockBelowState = level.getBlockState(blockBelowPos);
-            level.setBlockAndUpdate(blockBelowPos, blockBelowState.setValue(HAS_TOP, true));
-            return true;
+            if(blockBelowState.getValue(CONNECTED_BLOCK) == blockState.getValue(CONNECTED_BLOCK)){
+                level.setBlockAndUpdate(blockBelowPos, blockBelowState.setValue(HAS_TOP, true));
+                blockBelowPos = getConnectedShutter(blockBelowPos, blockBelowState);
+                blockBelowState = level.getBlockState(blockBelowPos);
+                level.setBlockAndUpdate(blockBelowPos, blockBelowState.setValue(HAS_TOP, true));
+                return true;
+            }
         }
         return false;
     }
@@ -271,11 +273,13 @@ public class ShutterBlock extends Block{
         BlockPos blockAbovePos = blockPos.above();
         BlockState blockBelowState = level.getBlockState(blockAbovePos);
         if(blockBelowState.getBlock() == blockState.getBlock()){
-            level.setBlockAndUpdate(blockAbovePos, blockBelowState.setValue(HAS_BOTTOM, true));
-            blockAbovePos = getConnectedShutter(blockAbovePos, blockBelowState);
-            blockBelowState = level.getBlockState(blockAbovePos);
-            level.setBlockAndUpdate(blockAbovePos, blockBelowState.setValue(HAS_BOTTOM, true));
-            return true;
+            if(blockBelowState.getValue(CONNECTED_BLOCK) == blockState.getValue(CONNECTED_BLOCK)) {
+                level.setBlockAndUpdate(blockAbovePos, blockBelowState.setValue(HAS_BOTTOM, true));
+                blockAbovePos = getConnectedShutter(blockAbovePos, blockBelowState);
+                blockBelowState = level.getBlockState(blockAbovePos);
+                level.setBlockAndUpdate(blockAbovePos, blockBelowState.setValue(HAS_BOTTOM, true));
+                return true;
+            }
         }
         return false;
     }
