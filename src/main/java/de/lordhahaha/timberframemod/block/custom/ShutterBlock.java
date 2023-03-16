@@ -27,6 +27,8 @@ public class ShutterBlock extends Block{
     public static final EnumProperty<Neighbour> NEIGHBOUR = EnumProperty.create("neighbour", Neighbour.class);
     public static final EnumProperty<Neighbour> CONNECTED_BLOCK = EnumProperty.create("connected_block", Neighbour.class);
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+    public static final BooleanProperty HAS_TOP = BooleanProperty.create("top");
+    public static final BooleanProperty HAS_BOTTOM = BooleanProperty.create("bottom");
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 
@@ -74,13 +76,18 @@ public class ShutterBlock extends Block{
         Level level = placeContext.getLevel();
         Neighbour connecedBlock = placeContext.getPlayer().isCrouching() ? Neighbour.LEFT : Neighbour.RIGHT;
         BlockState neighbourBlockState = level.getBlockState(getConnectedShutter(blockPos, connecedBlock, placeContext.getHorizontalDirection().getOpposite()));
+
         if(neighbourBlockState.canBeReplaced(placeContext)) {
             BlockState newBlock = this.defaultBlockState();
+            boolean hasTop = hasTopShutterAndLink(newBlock, blockPos, level);
+            boolean hasBottom = hasBottomShutterAndLink(newBlock, blockPos, level);
             newBlock = newBlock
                     .setValue(FACING, placeContext.getHorizontalDirection().getOpposite())
                     .setValue(ACTIVE, Boolean.TRUE)
                     .setValue(OPEN, Boolean.TRUE)
-                    .setValue(CONNECTED_BLOCK, connecedBlock);
+                    .setValue(CONNECTED_BLOCK, connecedBlock)
+                    .setValue(HAS_TOP, hasTop)
+                    .setValue(HAS_BOTTOM, hasBottom);
             newBlock = newBlock.setValue(NEIGHBOUR, linkToNeighbourShutter(newBlock, blockPos, level));
 
             return newBlock;
@@ -110,6 +117,8 @@ public class ShutterBlock extends Block{
                           .setValue(OPEN, !blockState.getValue(OPEN));
         level.setBlockAndUpdate(pos, blockState);
     }
+
+
     private Neighbour linkToNeighbourShutter(BlockState blockState, BlockPos blockPos, Level level){
         Direction facing = blockState.getValue(FACING);
         Neighbour connectedBlockDir = blockState.getValue(CONNECTED_BLOCK);
@@ -212,6 +221,30 @@ public class ShutterBlock extends Block{
         }
     }
 
+    private boolean hasBottomShutterAndLink(BlockState blockState, BlockPos blockPos, Level level) {
+        BlockPos blockBelowPos = blockPos.below();
+        BlockState blockBelowState = level.getBlockState(blockBelowPos);
+        if(blockBelowState.getBlock() == blockState.getBlock()){
+            level.setBlockAndUpdate(blockBelowPos, blockBelowState.setValue(HAS_TOP, true));
+            blockBelowPos = getConnectedShutter(blockBelowPos, blockBelowState);
+            blockBelowState = level.getBlockState(blockBelowPos);
+            level.setBlockAndUpdate(blockBelowPos, blockBelowState.setValue(HAS_TOP, true));
+            return true;
+        }
+        return false;
+    }
+    private boolean hasTopShutterAndLink(BlockState blockState, BlockPos blockPos, Level level){
+        BlockPos blockAbovePos = blockPos.above();
+        BlockState blockBelowState = level.getBlockState(blockAbovePos);
+        if(blockBelowState.getBlock() == blockState.getBlock()){
+            level.setBlockAndUpdate(blockAbovePos, blockBelowState.setValue(HAS_BOTTOM, true));
+            blockAbovePos = getConnectedShutter(blockAbovePos, blockBelowState);
+            blockBelowState = level.getBlockState(blockAbovePos);
+            level.setBlockAndUpdate(blockAbovePos, blockBelowState.setValue(HAS_BOTTOM, true));
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public BlockState rotate(@NotNull BlockState p_48722_, Rotation rotation) {
@@ -225,7 +258,7 @@ public class ShutterBlock extends Block{
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(OPEN, FACING, NEIGHBOUR, ACTIVE, CONNECTED_BLOCK);
+        builder.add(FACING, OPEN, ACTIVE, CONNECTED_BLOCK, NEIGHBOUR, HAS_TOP, HAS_BOTTOM);
     }
 
     @Override
