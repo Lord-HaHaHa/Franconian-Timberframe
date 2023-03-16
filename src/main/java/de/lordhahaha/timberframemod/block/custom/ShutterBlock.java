@@ -97,12 +97,12 @@ public class ShutterBlock extends Block{
             return null;
     }
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        toggleShutter(blockState, level, blockPos);
+        toggleShutterRow(blockState, blockPos, level);
         toggleNeighbourShutter(blockState, blockPos, level); // Try to change another Shutter boundle
         level.levelEvent(player, 1006, blockPos, 0);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
-    private void toggleShutter(BlockState blockState, Level level, BlockPos pos) {
+    private void toggleShutter(BlockState blockState, BlockPos pos, Level level) {
         Direction dir = blockState.getValue(FACING);
 
         // Update the clicked Block
@@ -118,7 +118,29 @@ public class ShutterBlock extends Block{
         level.setBlockAndUpdate(pos, blockState);
     }
 
+    private void toggleShutterRow(BlockState blockState, BlockPos blockPos,Level level){
+        toggleShutterAbove(blockState, blockPos, level);
+        toggleShutterBelow(blockState, blockPos, level);
+        toggleShutter(blockState, blockPos, level);
+    }
 
+    private void toggleShutterAbove(BlockState blockState, BlockPos blockPos, Level level){
+        if(blockState.getValue(HAS_TOP)){
+            BlockPos blockPosAbove = blockPos.above();
+            BlockState blockStateAbove = level.getBlockState(blockPosAbove);
+            toggleShutterAbove(blockStateAbove, blockPosAbove, level);
+        }
+            toggleShutter(blockState, blockPos, level);
+    }
+
+    private void toggleShutterBelow(BlockState blockState, BlockPos blockPos, Level level){
+        if(blockState.getValue(HAS_BOTTOM)){
+            BlockPos blockPosBelow = blockPos.below();
+            BlockState blockStateBelow = level.getBlockState(blockPosBelow);
+            toggleShutterBelow(blockStateBelow, blockPosBelow, level);
+        }
+            toggleShutter(blockState, blockPos, level);
+    }
     private Neighbour linkToNeighbourShutter(BlockState blockState, BlockPos blockPos, Level level){
         Direction facing = blockState.getValue(FACING);
         Neighbour connectedBlockDir = blockState.getValue(CONNECTED_BLOCK);
@@ -176,7 +198,7 @@ public class ShutterBlock extends Block{
         BlockPos neighbourShutterPos = getNeighbourShutterPos(blockState, blockPos);
         if(neighbourShutterPos != null) {
             BlockState neighbourShutterState = level.getBlockState(neighbourShutterPos);
-            toggleShutter(neighbourShutterState, level, neighbourShutterPos);
+            toggleShutterRow(neighbourShutterState, neighbourShutterPos, level);
         }
     }
 
@@ -194,6 +216,18 @@ public class ShutterBlock extends Block{
                 neighborShutterPos = getConnectedShutter(neighborShutterPos, neighbourShutterState);
                 level.setBlockAndUpdate(neighborShutterPos, level.getBlockState(neighborShutterPos).setValue(NEIGHBOUR, Neighbour.NULL));
             }
+        }
+
+        // unlink Top / Bottom Block
+        if(blockState.getValue(HAS_TOP)){
+            BlockPos blockAbovePos = blockPos.above();
+            BlockState blockAboveState = level.getBlockState(blockAbovePos);
+            level.setBlockAndUpdate(blockAbovePos, blockAboveState.setValue(HAS_BOTTOM, false));
+        }
+        if(blockState.getValue(HAS_BOTTOM)){
+            BlockPos blockBelowPos = blockPos.below();
+            BlockState blockBelowState = level.getBlockState(blockBelowPos);
+            level.setBlockAndUpdate(blockBelowPos, blockBelowState.setValue(HAS_TOP, false));
         }
         super.playerWillDestroy(level, blockPos, blockState, p_49855_);
     }
