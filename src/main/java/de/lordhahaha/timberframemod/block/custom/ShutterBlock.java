@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
 
@@ -56,9 +57,8 @@ public class ShutterBlock extends Block{
 
     public void setPlacedBy(Level level, BlockPos blockPos, BlockState blockState, LivingEntity p_52752_, ItemStack p_52753_) {
         if(blockState != null) {
-            System.out.println("234");
             Direction facing = blockState.getValue(FACING);
-            level.setBlock(getNeighbourShutter(blockPos, blockState, facing), blockState
+            level.setBlock(getConnectedShutter(blockPos, blockState), blockState
                             .setValue(FACING, blockState.getValue(FACING))
                             .setValue(ACTIVE, !blockState.getValue(ACTIVE))
                             .setValue(OPEN, blockState.getValue(OPEN))
@@ -73,16 +73,15 @@ public class ShutterBlock extends Block{
         BlockPos blockPos = placeContext.getClickedPos();
         Level level = placeContext.getLevel();
         Neighbour connecedBlock = placeContext.getPlayer().isCrouching() ? Neighbour.LEFT : Neighbour.RIGHT;
-        System.out.println(connecedBlock);
-        BlockState neighbourBlockState = level.getBlockState(getNeighbourShutter(blockPos, connecedBlock, placeContext.getHorizontalDirection().getOpposite()));
+        BlockState neighbourBlockState = level.getBlockState(getConnectedShutter(blockPos, connecedBlock, placeContext.getHorizontalDirection().getOpposite()));
         if(neighbourBlockState.canBeReplaced(placeContext)) {
             BlockState newBlock = this.defaultBlockState();
             newBlock = newBlock
                     .setValue(FACING, placeContext.getHorizontalDirection().getOpposite())
                     .setValue(ACTIVE, Boolean.TRUE)
-                    .setValue(NEIGHBOUR, linkToNeighbourShutter(newBlock, blockPos, level))
                     .setValue(OPEN, Boolean.TRUE)
                     .setValue(CONNECTED_BLOCK, connecedBlock);
+            newBlock = newBlock.setValue(NEIGHBOUR, linkToNeighbourShutter(newBlock, blockPos, level));
 
             return newBlock;
         }
@@ -92,100 +91,106 @@ public class ShutterBlock extends Block{
     }
 
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand p_60507_, BlockHitResult p_60508_) {
-        updateShutter(blockState, level, blockPos, !blockState.getValue(ACTIVE), blockState.getValue(FACING));
-        updateNeighbourShutter(blockState, level, blockPos); // Try to change another Shutter boundle
+        toggleShutter(blockState, level, blockPos);
+        toggleNeighbourShutter(blockState, blockPos, level); // Try to change another Shutter boundle
         level.levelEvent(player, 1006, blockPos, 0);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
-    private void updateShutter(BlockState blockState, Level level, BlockPos pos, boolean open, Direction dir) {
+    private void toggleShutter(BlockState blockState, Level level, BlockPos pos) {
+        Direction dir = blockState.getValue(FACING);
+
         // Update the clicked Block
-        level.setBlockAndUpdate(pos, blockState.setValue(ACTIVE, open).setValue(OPEN, !blockState.getValue(OPEN)));
+        blockState = blockState.setValue(ACTIVE, !blockState.getValue(ACTIVE))
+                               .setValue(OPEN, !blockState.getValue(OPEN));
+        level.setBlockAndUpdate(pos, blockState);
+
         // Update the connected Block
-        pos = getNeighbourShutter(pos, blockState, dir);
-        blockState = level.getBlockState(pos);
-        level.setBlockAndUpdate(pos, blockState.setValue(ACTIVE, !open).setValue(OPEN, !blockState.getValue(OPEN)));
+        pos = getConnectedShutter(pos, blockState);
+        blockState = level.getBlockState(pos)
+                          .setValue(ACTIVE, !blockState.getValue(ACTIVE))
+                          .setValue(OPEN, !blockState.getValue(OPEN));
+        level.setBlockAndUpdate(pos, blockState);
     }
+
 
     private Neighbour linkToNeighbourShutter(BlockState blockState, BlockPos blockPos, Level level){
         Direction facing = blockState.getValue(FACING);
-        // Right
-        BlockPos neighbourPos = getNeighbourShutterPosition(getNeighbourShutterPosition(blockPos, facing),facing);
-        BlockState neighbourState = level.getBlockState(neighbourPos);
-        System.out.println(MessageFormat.format("Own: {0}, Next: {1}", blockState.getBlock(), neighbourState.getBlock()));
-        if(neighbourState.getBlock() == blockState.getBlock()){
-            if(neighbourState.getValue(NEIGHBOUR) == Neighbour.NULL){
-                level.setBlockAndUpdate(neighbourPos, neighbourState.setValue(NEIGHBOUR, Neighbour.LEFT));
-                level.setBlockAndUpdate(blockPos, blockState.setValue(NEIGHBOUR, Neighbour.RIGHT));
-                return Neighbour.RIGHT;
+        Neighbour connectedBlockDir = blockState.getValue(CONNECTED_BLOCK);
+        BlockPos connectedBlockPos = getConnectedShutter(blockPos, blockState);
+        BlockState connectedBlockState = level.getBlockState(connectedBlockPos);
+        System.out.println(connectedBlockPos);
+        System.out.println(connectedBlockDir);
+        // TODO Be smarter and remove the double code and only change the Neighbour Parameter depending on connected Block
+        if(connectedBlockDir == Neighbour.LEFT){
+            // Get the next Shutter bundel
+            facing = facing.getOpposite(); //TODO ONLY DIFFERENTZ IN CODE EXCEPT THE OPPOSITE NEIGHBOUR PARAMETER AND RETURN VALUE
+            BlockPos neighbourPos = getNextPosition(getNextPosition(blockPos, facing),facing);
+            BlockState neighbourState = level.getBlockState(neighbourPos);
+            System.out.println(neighbourPos);
+            if(neighbourState.getBlock() == blockState.getBlock()) {
+                if (neighbourState.getValue(NEIGHBOUR) == Neighbour.NULL && !neighbourState.getValue(ACTIVE)) {
+                    // Update Neighbour Shutter
+                    level.setBlockAndUpdate(neighbourPos, neighbourState.setValue(NEIGHBOUR, Neighbour.RIGHT));
+                    neighbourPos = getConnectedShutter(neighbourPos, neighbourState);
+                    neighbourState = level.getBlockState(neighbourPos);
+                    level.setBlockAndUpdate(neighbourPos, neighbourState.setValue(NEIGHBOUR, Neighbour.RIGHT));
+                    return Neighbour.LEFT; // Return Neighbour to new Block
+                }
+            }
+        } else if (connectedBlockDir == Neighbour.RIGHT) {
+            // Get the next Shutter bundel
+            BlockPos neighbourPos = getNextPosition(getNextPosition(blockPos, facing),facing);
+            BlockState neighbourState = level.getBlockState(neighbourPos);
+            System.out.println(neighbourPos);
+            if(neighbourState.getBlock() == blockState.getBlock()) {
+                if (neighbourState.getValue(NEIGHBOUR) == Neighbour.NULL && !neighbourState.getValue(ACTIVE)) {
+                    // Update Neighbour Shutter
+                    level.setBlockAndUpdate(neighbourPos, neighbourState.setValue(NEIGHBOUR, Neighbour.LEFT));
+                    neighbourPos = getConnectedShutter(neighbourPos, neighbourState);
+                    neighbourState = level.getBlockState(neighbourPos);
+                    level.setBlockAndUpdate(neighbourPos, neighbourState.setValue(NEIGHBOUR, Neighbour.LEFT));
+                    return Neighbour.RIGHT; // Return Neighbour to new Block
+                }
             }
         }
-
-        // Left
-        facing = facing.getOpposite();
-        neighbourPos = getNeighbourShutterPosition(blockPos, facing);
-        neighbourState = level.getBlockState(neighbourPos);
-        if(neighbourState.getBlock() == blockState.getBlock()){
-            if(neighbourState.getValue(NEIGHBOUR) == Neighbour.NULL){
-                level.setBlockAndUpdate(neighbourPos, neighbourState.setValue(NEIGHBOUR, Neighbour.RIGHT));
-                level.setBlockAndUpdate(blockPos, blockState.setValue(NEIGHBOUR, Neighbour.LEFT));
-                return Neighbour.LEFT;
-            }
-        }
-
 
         return Neighbour.NULL;
+
     }
-    private void updateNeighbourShutter(BlockState blockState, Level level, BlockPos blockPos){
-        BlockPos neighbourShutterPos = null;
-        if(blockState.getValue(NEIGHBOUR) == Neighbour.NULL)
-            return;
-
+    private void toggleNeighbourShutter(BlockState blockState, BlockPos blockPos, Level level){
+        Neighbour neighbour = blockState.getValue(NEIGHBOUR);
         Direction facing = blockState.getValue(FACING);
+        if(neighbour != Neighbour.NULL){
+            if(neighbour == Neighbour.LEFT){
+                facing = facing.getOpposite();
+            }
+            BlockPos neighbourShutterPos = getNextPosition(blockPos, facing);
+            if(blockState.getValue(NEIGHBOUR) == blockState.getValue(CONNECTED_BLOCK)) // go to another next block to skip Connected Block
+                neighbourShutterPos = getNextPosition(neighbourShutterPos, facing);
 
-        // Test Left / Right neighbour
-        if(blockState.getValue(NEIGHBOUR) == Neighbour.LEFT)
-            neighbourShutterPos = getNeighbourShutterPosition(blockPos, facing);
-
-        if(blockState.getValue(NEIGHBOUR) == Neighbour.RIGHT)
-            neighbourShutterPos = getNeighbourShutterPosition(getNeighbourShutterPosition(blockPos, facing),facing);
-
-        BlockState neighbourShutter = level.getBlockState(neighbourShutterPos);
-        if(neighbourShutter.getBlock() == blockState.getBlock()){
-            updateShutter(neighbourShutter, level, neighbourShutterPos, !neighbourShutter.getValue(ACTIVE), blockState.getValue(FACING));;
+            BlockState neighbourShutterState = level.getBlockState(neighbourShutterPos);
+            System.out.println(neighbourShutterPos);
+            toggleShutter(neighbourShutterState, level, neighbourShutterPos);
         }
-
-        facing = facing.getOpposite();
-        if(blockState.getValue(NEIGHBOUR) == Neighbour.LEFT)
-            neighbourShutterPos = getNeighbourShutterPosition(getNeighbourShutterPosition(blockPos, facing),facing);
-
-        if(blockState.getValue(NEIGHBOUR) == Neighbour.RIGHT)
-            neighbourShutterPos = getNeighbourShutterPosition(blockPos, facing);
-
-        neighbourShutter = level.getBlockState(neighbourShutterPos);
-        if(neighbourShutter.getBlock() == blockState.getBlock()){
-            updateShutter(neighbourShutter, level, neighbourShutterPos, !neighbourShutter.getValue(ACTIVE), blockState.getValue(FACING));
-        }
-
     }
 
     @Override
     public void playerWillDestroy(Level level, BlockPos blockPos, BlockState blockState, Player p_49855_) {
-        BlockPos toDelete = getNeighbourShutter(blockPos, blockState, blockState.getValue(FACING));
+        BlockPos toDelete = getConnectedShutter(blockPos, blockState);
         level.destroyBlock(toDelete, false);
         super.playerWillDestroy(level, blockPos, blockState, p_49855_);
     }
-
-    private BlockPos getNeighbourShutter(BlockPos blockPos, BlockState blockState, Direction facing){
-        return getNeighbourShutter(blockPos, blockState.getValue(CONNECTED_BLOCK), facing);
+    private BlockPos getConnectedShutter(BlockPos blockPos, BlockState blockState){
+        return getConnectedShutter(blockPos, blockState.getValue(CONNECTED_BLOCK), blockState.getValue(FACING));
     }
-    private BlockPos getNeighbourShutter(BlockPos blockPos, Neighbour neighbour, Direction facing){
+    private BlockPos getConnectedShutter(BlockPos blockPos, Neighbour neighbour, Direction facing){
         if(neighbour == Neighbour.LEFT)
             facing = facing.getOpposite();
 
-        return getNeighbourShutterPosition(blockPos, facing);
+        return getNextPosition(blockPos, facing);
     }
 
-    private BlockPos getNeighbourShutterPosition(BlockPos blockPos, Direction facing){
+    private BlockPos getNextPosition(BlockPos blockPos, Direction facing){
         switch (facing){
             default:
             case NORTH:
@@ -201,7 +206,7 @@ public class ShutterBlock extends Block{
 
 
     @Override
-    public BlockState rotate(BlockState p_48722_, Rotation rotation) {
+    public BlockState rotate(@NotNull BlockState p_48722_, Rotation rotation) {
         return p_48722_.setValue(FACING, rotation.rotate(p_48722_.getValue(FACING)));
     }
 
