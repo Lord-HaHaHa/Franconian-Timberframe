@@ -39,6 +39,8 @@ public class ModItems {
     public static final RegistryObject<Item> FRAME_PEDIMENT_RIGHT = ITEMS.register("frame_pediment_right", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
     public static final RegistryObject<Item> FRAME_SHUTTER_LEFT = ITEMS.register("frame_shutter_left", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
     public static final RegistryObject<Item> FRAME_SHUTTER_RIGHT = ITEMS.register("frame_shutter_right", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
+    public static final RegistryObject<Item> FRAME_DOUBLE_UP = ITEMS.register("frame_double_up", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
+    public static final RegistryObject<Item> FRAME_DOUBLE_DOWN = ITEMS.register("frame_double_down", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);
