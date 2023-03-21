@@ -1,8 +1,0 @@
-{
-    "variants": {
-        "facing=south": { "model": "timberframemod:block/timberstation" },
-        "facing=north": { "model": "timberframemod:block/timberstation", "y": 180 },
-        "facing=east":  { "model": "timberframemod:block/timberstation", "y": 270 },
-        "facing=west":  { "model": "timberframemod:block/timberstation", "y": 90 }
-    }
-}

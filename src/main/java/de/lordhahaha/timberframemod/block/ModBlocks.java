@@ -3,8 +3,8 @@ package de.lordhahaha.timberframemod.block;
 import de.lordhahaha.timberframemod.Timberframemod;
 import de.lordhahaha.timberframemod.block.custom.RotationalBlock;
 import de.lordhahaha.timberframemod.block.custom.RotationalDoubleBlock;
-import de.lordhahaha.timberframemod.block.custom.TimberstationBlock;
 import de.lordhahaha.timberframemod.block.custom.ShutterBlock;
+import de.lordhahaha.timberframemod.block.custom.WoodworkingBenchBlock;
 import de.lordhahaha.timberframemod.tab.ModCreativeModeTab;
 import de.lordhahaha.timberframemod.item.ModItems;
 import net.minecraft.world.item.BlockItem;
@@ -29,10 +29,10 @@ public class ModBlocks {
     private static final BlockBehaviour.Properties TimberframeMaterial = BlockBehaviour.Properties.of(Material.WOOD).strength(2.0F, 3.0F).sound(SoundType.WOOD);
 
 
-    public static final RegistryObject<Block> BLOCK_TIMBERSTATION = registerBlock("timberstation", () -> new TimberstationBlock(TimberframeMaterial.noOcclusion()) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_SHUTTER = registerBlock("block_shutter", () -> new ShutterBlock(TimberframeMaterial.noOcclusion()) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-
+    //public static final Block WORKING_TABLE = new WorkingTableBlock(AbstractBlock.Settings.copy(Blocks.CRAFTING_TABLE).sounds(BlockSoundGroup.WOOD));
+    public static final RegistryObject<Block> BLOCK_WOODWORKING_BENCH = registerBlock("block_woodworking_bench", () -> new WoodworkingBenchBlock(TimberframeMaterial.noOcclusion()) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     // Register all new blocks
+    public static final RegistryObject<Block> BLOCK_SHUTTER = registerBlock("block_shutter", () -> new ShutterBlock(TimberframeMaterial.noOcclusion()) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_PLASTER = registerBlock("block_plaster", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_BASIC = registerBlock("block_basic", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_DOWN = registerBlock("block_down", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);

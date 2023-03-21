@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=south": { "model": "timberframemod:block/block_woodworking_bench" },
+        "facing=north": { "model": "timberframemod:block/block_woodworking_bench", "y": 180 },
+        "facing=east":  { "model": "timberframemod:block/block_woodworking_bench", "y": 270 },
+        "facing=west":  { "model": "timberframemod:block/block_woodworking_bench", "y": 90 }
+    }
+}
