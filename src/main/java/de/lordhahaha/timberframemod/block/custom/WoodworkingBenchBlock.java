@@ -1,5 +1,6 @@
 package de.lordhahaha.timberframemod.block.custom;
 
+import de.lordhahaha.timberframemod.block.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -7,6 +8,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.CraftingMenu;
@@ -53,11 +55,21 @@ public class WoodworkingBenchBlock extends Block {
     }
 
 
-    @Nullable
+
     @Override
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
-        return new SimpleMenuProvider((p_57074_, p_57075_, p_57076_) -> {
-            return new CraftingMenu(p_57074_, p_57075_, ContainerLevelAccess.create(level, blockPos));
+        return new SimpleMenuProvider((i, inventory, p_57076_) -> {
+
+            CraftingMenu menu = new CraftingMenu(i, inventory, ContainerLevelAccess.create(level, blockPos)){
+                ContainerLevelAccess access = ContainerLevelAccess.create(level, blockPos);
+                @Override
+                public boolean stillValid(Player player){
+                    return stillValid(this.access, player, ModBlocks.BLOCK_WOODWORKING_BENCH.get());
+                    //return true;
+                }
+            };
+
+            return menu;
         }, CONTAINER_TITLE);
     }
 
