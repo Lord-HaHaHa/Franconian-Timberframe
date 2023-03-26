@@ -3,6 +3,8 @@ package de.lordhahaha.timberframemod;
 import com.mojang.logging.LogUtils;
 import de.lordhahaha.timberframemod.block.ModBlocks;
 import de.lordhahaha.timberframemod.item.ModItems;
+import de.lordhahaha.timberframemod.menu.ModMenus;
+import de.lordhahaha.timberframemod.recipe.ModRecipes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,6 +28,8 @@ public class Timberframemod
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+
+        ModRecipes.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
     }

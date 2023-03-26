@@ -1,6 +1,9 @@
 package de.lordhahaha.timberframemod.block.custom;
 
+import com.google.common.collect.Lists;
 import de.lordhahaha.timberframemod.block.ModBlocks;
+import de.lordhahaha.timberframemod.menu.WoodworkingBenchMenu;
+import de.lordhahaha.timberframemod.recipe.WoodworkingBenchRecipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -8,11 +11,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.inventory.StonecutterMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.crafting.StonecutterRecipe;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -27,7 +30,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 
-import javax.annotation.Nullable;
+import java.util.List;
 
 
 public class WoodworkingBenchBlock extends Block {
@@ -54,18 +57,16 @@ public class WoodworkingBenchBlock extends Block {
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-
-
     @Override
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
-        return new SimpleMenuProvider((i, inventory, p_57076_) -> {
+        return new SimpleMenuProvider((i, inventory, player) -> {
 
-            CraftingMenu menu = new CraftingMenu(i, inventory, ContainerLevelAccess.create(level, blockPos)){
+            StonecutterMenu menu = new StonecutterMenu(i, inventory, ContainerLevelAccess.create(level, blockPos)){
                 ContainerLevelAccess access = ContainerLevelAccess.create(level, blockPos);
+
                 @Override
                 public boolean stillValid(Player player){
                     return stillValid(this.access, player, ModBlocks.BLOCK_WOODWORKING_BENCH.get());
-                    //return true;
                 }
             };
 
