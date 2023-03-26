@@ -13,7 +13,7 @@ public class ModRecipes {
             DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Timberframemod.MOD_ID);
 
     public static final RegistryObject<RecipeSerializer<WoodworkingBenchRecipe>> WOODWORKING_SERIALIZER =
-            SERIALIZERS.register("woodworking", () -> WoodworkingBenchRecipe.Serializer.INSTANCE);
+            SERIALIZERS.register("wood_working", () -> WoodworkingBenchRecipe.Serializer.INSTANCE);
 
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);

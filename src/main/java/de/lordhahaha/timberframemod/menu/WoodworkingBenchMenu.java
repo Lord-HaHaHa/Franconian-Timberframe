@@ -1,7 +1,10 @@
 package de.lordhahaha.timberframemod.menu;
 
 import com.google.common.collect.Lists;
+import de.lordhahaha.timberframemod.Timberframemod;
+import de.lordhahaha.timberframemod.block.ModBlocks;
 import de.lordhahaha.timberframemod.recipe.WoodworkingBenchRecipe;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
@@ -19,16 +22,10 @@ import net.minecraft.world.level.block.Blocks;
 import java.util.List;
 
 public class WoodworkingBenchMenu extends AbstractContainerMenu {
-    public static final int INPUT_SLOT = 0;
-    public static final int RESULT_SLOT = 1;
-    private static final int INV_SLOT_START = 2;
-    private static final int INV_SLOT_END = 29;
-    private static final int USE_ROW_SLOT_START = 29;
-    private static final int USE_ROW_SLOT_END = 38;
     private final ContainerLevelAccess access;
     private final DataSlot selectedRecipeIndex = DataSlot.standalone();
     private final Level level;
-    private List<StonecutterRecipe> recipes = Lists.newArrayList();
+    private List<WoodworkingBenchRecipe> recipes = Lists.newArrayList();
     private ItemStack input = ItemStack.EMPTY;
     long lastSoundTime;
     final Slot inputSlot;
@@ -44,29 +41,29 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
     };
     final ResultContainer resultContainer = new ResultContainer();
 
-    public WoodworkingBenchMenu(int p_40294_, Inventory p_40295_) {
-        this(p_40294_, p_40295_, ContainerLevelAccess.NULL);
+    public WoodworkingBenchMenu(int id, Inventory inventory, FriendlyByteBuf friendlyByteBuf) {
+        this(id, inventory, ContainerLevelAccess.NULL);
     }
 
-    public WoodworkingBenchMenu(int p_40297_, Inventory p_40298_, final ContainerLevelAccess p_40299_) {
-        super(MenuType.STONECUTTER, p_40297_);
-        this.access = p_40299_;
-        this.level = p_40298_.player.level;
+    public WoodworkingBenchMenu(int id, Inventory inventory, final ContainerLevelAccess containerLevelAccess) {
+        super(ModMenuTypes.WOODWORKING_MENU.get(), id);
+        this.access = containerLevelAccess;
+        this.level = inventory.player.level;
         this.inputSlot = this.addSlot(new Slot(this.container, 0, 20, 33));
         this.resultSlot = this.addSlot(new Slot(this.resultContainer, 1, 143, 33) {
             public boolean mayPlace(ItemStack p_40362_) {
                 return false;
             }
 
-            public void onTake(Player p_150672_, ItemStack p_150673_) {
-                p_150673_.onCraftedBy(p_150672_.level, p_150672_, p_150673_.getCount());
-                WoodworkingBenchMenu.this.resultContainer.awardUsedRecipes(p_150672_);
+            public void onTake(Player player, ItemStack itemStack) {
+                itemStack.onCraftedBy(player.level, player, itemStack.getCount());
+                WoodworkingBenchMenu.this.resultContainer.awardUsedRecipes(player);
                 ItemStack itemstack = WoodworkingBenchMenu.this.inputSlot.remove(1);
                 if (!itemstack.isEmpty()) {
                     WoodworkingBenchMenu.this.setupResultSlot();
                 }
 
-                p_40299_.execute((p_40364_, p_40365_) -> {
+                containerLevelAccess.execute((p_40364_, p_40365_) -> {
                     long l = p_40364_.getGameTime();
                     if (WoodworkingBenchMenu.this.lastSoundTime != l) {
                         p_40364_.playSound((Player)null, p_40365_, SoundEvents.UI_STONECUTTER_TAKE_RESULT, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -74,44 +71,28 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
                     }
 
                 });
-                super.onTake(p_150672_, p_150673_);
+                super.onTake(player, itemStack);
             }
         });
 
         for(int i = 0; i < 3; ++i) {
             for(int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(p_40298_, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
             }
         }
 
         for(int k = 0; k < 9; ++k) {
-            this.addSlot(new Slot(p_40298_, k, 8 + k * 18, 142));
+            this.addSlot(new Slot(inventory, k, 8 + k * 18, 142));
         }
 
         this.addDataSlot(this.selectedRecipeIndex);
     }
 
-    public int getSelectedRecipeIndex() {
-        return this.selectedRecipeIndex.get();
+    public boolean stillValid(Player player) {
+        return stillValid(this.access, player, ModBlocks.BLOCK_WOODWORKING_BENCH.get());
     }
 
-    public List<StonecutterRecipe> getRecipes() {
-        return this.recipes;
-    }
-
-    public int getNumRecipes() {
-        return this.recipes.size();
-    }
-
-    public boolean hasInputItem() {
-        return this.inputSlot.hasItem() && !this.recipes.isEmpty();
-    }
-
-    public boolean stillValid(Player p_40307_) {
-        return stillValid(this.access, p_40307_, Blocks.STONECUTTER);
-    }
-
-    public boolean clickMenuButton(Player p_40309_, int p_40310_) {
+    public boolean clickMenuButton(Player player, int p_40310_) {
         if (this.isValidRecipeIndex(p_40310_)) {
             this.selectedRecipeIndex.set(p_40310_);
             this.setupResultSlot();
@@ -138,15 +119,16 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
         this.selectedRecipeIndex.set(-1);
         this.resultSlot.set(ItemStack.EMPTY);
         if (!p_40305_.isEmpty()) {
-            this.recipes = this.level.getRecipeManager().getRecipesFor(RecipeType.STONECUTTING, p_40304_, this.level);
+            this.recipes = this.level.getRecipeManager().getRecipesFor(WoodworkingBenchRecipe.Type.INSTANCE, p_40304_, this.level);
+            System.out.println(this.recipes.size());
         }
     }
 
     void setupResultSlot() {
         if (!this.recipes.isEmpty() && this.isValidRecipeIndex(this.selectedRecipeIndex.get())) {
-            StonecutterRecipe stonecutterrecipe = this.recipes.get(this.selectedRecipeIndex.get());
-            this.resultContainer.setRecipeUsed(stonecutterrecipe);
-            this.resultSlot.set(stonecutterrecipe.assemble(this.container));
+            WoodworkingBenchRecipe woodworkingBenchRecipe = this.recipes.get(this.selectedRecipeIndex.get());
+            this.resultContainer.setRecipeUsed(woodworkingBenchRecipe);
+            this.resultSlot.set(woodworkingBenchRecipe.assemble(this.container));
         } else {
             this.resultSlot.set(ItemStack.EMPTY);
         }
@@ -154,19 +136,11 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
         this.broadcastChanges();
     }
 
-    public MenuType<?> getType() {
-        return MenuType.STONECUTTER;
-    }
-
-    public void registerUpdateListener(Runnable p_40324_) {
-        this.slotUpdateListener = p_40324_;
-    }
-
     public boolean canTakeItemForPickAll(ItemStack p_40321_, Slot p_40322_) {
         return p_40322_.container != this.resultContainer && super.canTakeItemForPickAll(p_40321_, p_40322_);
     }
 
-    public ItemStack quickMoveStack(Player p_40328_, int p_40329_) {
+    public ItemStack quickMoveStack(Player player, int p_40329_) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(p_40329_);
         if (slot != null && slot.hasItem()) {
@@ -174,7 +148,7 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
             Item item = itemstack1.getItem();
             itemstack = itemstack1.copy();
             if (p_40329_ == 1) {
-                item.onCraftedBy(itemstack1, p_40328_.level, p_40328_);
+                item.onCraftedBy(itemstack1, player.level, player);
                 if (!this.moveItemStackTo(itemstack1, 2, 38, true)) {
                     return ItemStack.EMPTY;
                 }
@@ -184,7 +158,7 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(itemstack1, 2, 38, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (this.level.getRecipeManager().getRecipeFor(RecipeType.STONECUTTING, new SimpleContainer(itemstack1), this.level).isPresent()) {
+            } else if (this.level.getRecipeManager().getRecipeFor(WoodworkingBenchRecipe.Type.INSTANCE, new SimpleContainer(itemstack1), this.level).isPresent()) {
                 if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
                     return ItemStack.EMPTY;
                 }
@@ -205,19 +179,25 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
                 return ItemStack.EMPTY;
             }
 
-            slot.onTake(p_40328_, itemstack1);
+            slot.onTake(player, itemstack1);
             this.broadcastChanges();
         }
 
         return itemstack;
     }
 
-    public void removed(Player p_40326_) {
-        super.removed(p_40326_);
+    public void removed(Player player) {
+        super.removed(player);
         this.resultContainer.removeItemNoUpdate(1);
         this.access.execute((p_40313_, p_40314_) -> {
-            this.clearContainer(p_40326_, this.container);
+            this.clearContainer(player, this.container);
         });
     }
+
+    public int getNumRecipes() {return this.recipes.size();}
+    public boolean hasInputItem() {return this.inputSlot.hasItem() && !this.recipes.isEmpty();}
+    public List<WoodworkingBenchRecipe> getRecipes() {return this.recipes;}
+    public int getSelectedRecipeIndex() {return this.selectedRecipeIndex.get();}
+    public void registerUpdateListener(Runnable runnable) {this.slotUpdateListener = runnable;}
 
 }

@@ -1,21 +1,17 @@
 package de.lordhahaha.timberframemod.block.custom;
 
-import com.google.common.collect.Lists;
-import de.lordhahaha.timberframemod.block.ModBlocks;
 import de.lordhahaha.timberframemod.menu.WoodworkingBenchMenu;
-import de.lordhahaha.timberframemod.recipe.WoodworkingBenchRecipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.StonecutterMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.crafting.StonecutterRecipe;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -35,7 +31,6 @@ import java.util.List;
 
 public class WoodworkingBenchBlock extends Block {
     private static final Component CONTAINER_TITLE = Component.translatable("container.crafting");
-
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public WoodworkingBenchBlock(Properties properties) {
         super(properties);
@@ -49,28 +44,18 @@ public class WoodworkingBenchBlock extends Block {
 
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            System.out.println("Open Menu");
-            NetworkHooks.openScreen(serverPlayer, this.getMenuProvider(state, level, pos));
-            System.out.println("After Hook open Screen");
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        } else {
+            player.openMenu(state.getMenuProvider(level, pos));
+            return InteractionResult.CONSUME;
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
         return new SimpleMenuProvider((i, inventory, player) -> {
-
-            StonecutterMenu menu = new StonecutterMenu(i, inventory, ContainerLevelAccess.create(level, blockPos)){
-                ContainerLevelAccess access = ContainerLevelAccess.create(level, blockPos);
-
-                @Override
-                public boolean stillValid(Player player){
-                    return stillValid(this.access, player, ModBlocks.BLOCK_WOODWORKING_BENCH.get());
-                }
-            };
-
-            return menu;
+            return new WoodworkingBenchMenu(i, inventory, ContainerLevelAccess.create(level, blockPos));
         }, CONTAINER_TITLE);
     }
 
