@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    "timberframemod:block_basic",
+    "timberframemod:block_ceiling",
+    "timberframemod:block_ceiling_edge",
+    "timberframemod:block_cross",
+    "timberframemod:block_cross_ring",
+    "timberframemod:block_cross_small_curved",
+    "timberframemod:block_cross_small_straight",
+    "timberframemod:block_double_down",
+    "timberframemod:block_double_up",
+    "timberframemod:block_down",
+    "timberframemod:block_edge",
+    "timberframemod:block_hexa",
+    "timberframemod:block_man_left",
+    "timberframemod:block_man_right",
+    "timberframemod:block_pediment_left",
+    "timberframemod:block_pediment_right",
+    "timberframemod:block_plaster",
+    "timberframemod:block_straight_double",
+    "timberframemod:block_straight_single",
+    "timberframemod:block_up"
+  ]
+}

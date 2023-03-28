@@ -100,7 +100,6 @@ public class WoodworkingBenchScreen extends AbstractContainerScreen<WoodworkingB
 
     private void renderRecipes(int p_99349_, int p_99350_, int p_99351_) {
         List<WoodworkingBenchRecipe> list = this.menu.getRecipes();
-
         for(int i = this.startIndex; i < p_99351_ && i < this.menu.getNumRecipes(); ++i) {
             int j = i - this.startIndex;
             int k = p_99349_ + j % 4 * 16;

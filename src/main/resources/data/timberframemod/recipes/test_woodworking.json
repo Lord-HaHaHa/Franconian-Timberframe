@@ -1,8 +1,0 @@
-{
-  "type": "timberframemod:wood_working",
-  "count": 2,
-  "ingredient": {
-    "item": "minecraft:stick"
-  },
-  "result": "minecraft:diamond"
-}
