@@ -15,7 +15,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 public class WoodworkingBenchMenu extends AbstractContainerMenu {
@@ -23,7 +22,8 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
     private final DataSlot selectedRecipeIndex = DataSlot.standalone();
     private final Level level;
     private List<WoodworkingBenchRecipe> recipes = Lists.newArrayList();
-    private ItemStack input = ItemStack.EMPTY;
+    private ItemStack inputBlock = ItemStack.EMPTY;
+    private ItemStack inputExtra = ItemStack.EMPTY;
     long lastSoundTime;
     final Slot resultSlot;
     final Slot inputSlotBlock;
@@ -112,12 +112,16 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
         return p_40335_ >= 0 && p_40335_ < this.recipes.size();
     }
 
-    public void slotsChanged(Container p_40302_) {
+    public void slotsChanged(Container containerChanged) {
         ItemStack itemStackBlock = this.inputSlotBlock.getItem();
         ItemStack itemStackExtra = this.inputSlotExtra.getItem();
-        if (!itemStackBlock.is(this.input.getItem())) {
-            this.input = itemStackBlock.copy();
-            this.setupRecipeList(p_40302_, itemStackBlock);
+        if (!itemStackBlock.is(this.inputBlock.getItem())) {
+            this.inputBlock = itemStackBlock.copy();
+            this.setupRecipeList(containerChanged, itemStackBlock);
+        }
+        if(!itemStackExtra.is(this.inputBlock.getItem())) {
+            this.inputExtra = itemStackExtra.copy();
+            this.setupRecipeList(containerChanged, itemStackExtra);
         }
 
     }
@@ -127,9 +131,9 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
         this.selectedRecipeIndex.set(-1);
         this.resultSlot.set(ItemStack.EMPTY);
 
-        SimpleContainer container = new SimpleContainer(1);
+        SimpleContainer container = new SimpleContainer(2);
         container.setItem(0, this.containerForBlock.getItem(0));
-        //container.setItem(1, this.containerForExtra.getItem(0));
+        container.setItem(1, this.containerForExtra.getItem(0));
         if (!itemStackBlock.isEmpty()) {
             this.recipes = this.level.getRecipeManager().getRecipesFor(WoodworkingBenchRecipe.Type.INSTANCE, container, this.level);
             System.out.println(container.getContainerSize());
