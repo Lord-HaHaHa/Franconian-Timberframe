@@ -1,9 +1,14 @@
 {
   "type": "timberframemod:wood_working",
-  "count": 2,
   "ingredient": [
-    {"item": "minecraft:oak_planks"},
-    {"item": "minecraft:diamond"}
+    {"item": "minecraft:oak_planks",
+      "count": 5
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 3
+    }
   ],
-  "result": "minecraft:diamond_ore"
+  "result": "minecraft:diamond_ore",
+  "count": 2
 }
