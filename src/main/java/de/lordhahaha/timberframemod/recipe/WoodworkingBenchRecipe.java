@@ -33,13 +33,8 @@ public class WoodworkingBenchRecipe extends SingleItemRecipe {
     public boolean matches(Container container, Level p_44484_) {
         ItemStack itemStack1 = container.getItem(0);
         ItemStack itemStack2 = container.getItem(1);
-        System.out.println(MessageFormat.format("RecipeMatch: {0}", this.ingredient.test(itemStack1)));
-        System.out.println(MessageFormat.format("RecipeMatch: {0}", itemStack1.getCount() >= amountIngredient1));
-        System.out.println(MessageFormat.format("RecipeMatch: {0}", this.ingredient.test(itemStack2)));
-        System.out.println(MessageFormat.format("RecipeMatch: {0}", itemStack2.getCount() >= amountIngredient2));
         boolean flag = (this.ingredient.test(itemStack1) && itemStack1.getCount() >= amountIngredient1) &&
                 (this.ingredientExtra.test(itemStack2) && itemStack2.getCount() >= amountIngredient2);
-        System.out.println(MessageFormat.format("RecipeMatch: Flag: {0}", flag));
         return flag;
     }
 
@@ -68,12 +63,10 @@ public class WoodworkingBenchRecipe extends SingleItemRecipe {
                 JsonArray ingredientArray = GsonHelper.getAsJsonArray(recipe, "ingredient");
                 for(int i = 0; i <= ingredientArray.size()-1; i++){
                     JsonObject ingredientObject = ingredientArray.get(i).getAsJsonObject();
-                    System.out.println(MessageFormat.format("Recipe Read JSON: ingElement: {0}", ingredientObject));
                     Ingredient ingredient = Ingredient.fromJson(ingredientObject);
                     ingredients.add(ingredient);
                     int amount = ingredientObject.get("count").getAsInt();
                     amounts[i] = amount;
-                    System.out.println(MessageFormat.format("Recipe Read JSON: ingredient: {0} | Amount: {1}", ingredient, amount));
                 }
                 //ingredient = Ingredient.fromJson(GsonHelper.getAsJsonArray(recipe, "ingredient"));
             }

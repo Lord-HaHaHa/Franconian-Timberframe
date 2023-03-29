@@ -71,14 +71,9 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
 
                 WoodworkingBenchRecipe recipe = recipes.get(getSelectedRecipeIndex());
 
-                System.out.println(MessageFormat.format("onTake: Selected Index before Remove: {0}", getSelectedRecipeIndex()));
-                System.out.println(MessageFormat.format("onTake: Recipe: {0}", recipes.get(getSelectedRecipeIndex()).getIngredients().get(0).getItems()));
-                System.out.println(MessageFormat.format("onTake: Amount: Remove Slot1: {0} | Remove Slot2 {1}", recipe.amountIngredient1, recipe.amountIngredient2));
                 ItemStack itemstack = WoodworkingBenchMenu.this.inputSlotBlock.remove(recipe.amountIngredient1);
-                System.out.println(recipes.size());
-                System.out.println(MessageFormat.format("onTake: Selected Index: {0} | Max Recipes: {1}", getSelectedRecipeIndex(), getNumRecipes()));
-                //System.out.println(recipes.get(getSelectedRecipeIndex()).getIngredients());
                 ItemStack itemStackExtra = WoodworkingBenchMenu.this.inputSlotExtra.remove(recipe.amountIngredient2);
+
                 if (!itemstack.isEmpty() && !itemStackExtra.isEmpty()) {
                     System.out.println("onTake: SetupResultSlot");
                     WoodworkingBenchMenu.this.setupResultSlot();
@@ -134,7 +129,7 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
             this.inputBlock = itemStackBlock.copy();
             this.setupRecipeList(containerChanged, itemStackBlock);
         }
-        if(!itemStackExtra.is(this.inputBlock.getItem())) {
+        if(!itemStackExtra.is(this.inputExtra.getItem())) {
             this.inputExtra = itemStackExtra.copy();
             this.setupRecipeList(containerChanged, itemStackExtra);
         }
