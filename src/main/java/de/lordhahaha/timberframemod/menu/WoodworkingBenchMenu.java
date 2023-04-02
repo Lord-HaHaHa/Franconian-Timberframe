@@ -147,44 +147,42 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
 
         if (!itemStackBlock.isEmpty()) {
             this.recipes = this.level.getRecipeManager().getRecipesFor(WoodworkingBenchRecipe.Type.INSTANCE, container, this.level);
-            System.out.println(MessageFormat.format("setupRecipeList: Recipes Length: {0}", this.recipes.size()));
         }
     }
 
     void setupResultSlot() {
         if (!this.recipes.isEmpty() && this.isValidRecipeIndex(this.selectedRecipeIndex.get())) {
-            System.out.println("setUpResultSlot: Setup Result Slot");
             WoodworkingBenchRecipe woodworkingBenchRecipe = this.recipes.get(this.selectedRecipeIndex.get());
             this.resultContainer.setRecipeUsed(woodworkingBenchRecipe);
             this.resultSlot.set(woodworkingBenchRecipe.assemble(getInputContainer()));
         } else {
-            System.out.println("setUpResultSlot: Clear Field");
-            System.out.println(MessageFormat.format("setUpResultSlot: Recipes.Empty() {0} | SelectedRecipe Index: {1}", this.recipes.isEmpty(), this.selectedRecipeIndex.get()));
             this.resultSlot.set(ItemStack.EMPTY);
         }
 
         this.broadcastChanges();
     }
 
-    public boolean canTakeItemForPickAll(ItemStack p_40321_, Slot p_40322_) {
-        return p_40322_.container != this.resultContainer && super.canTakeItemForPickAll(p_40321_, p_40322_);
+    public boolean canTakeItemForPickAll(ItemStack itemStack, Slot slot) {
+        System.out.println(MessageFormat.format("canTakeItemForPickAll: ", itemStack.getItem().getName(itemStack)));
+        return slot.container != this.resultContainer && super.canTakeItemForPickAll(itemStack, slot);
     }
 
-    public ItemStack quickMoveStack(Player player, int p_40329_) {
+    public ItemStack quickMoveStack(Player player, int slotIndex) {
+        System.out.println(MessageFormat.format("quickMoveStack: used slotIndex: {0}", slotIndex));
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(p_40329_);
+        Slot slot = this.slots.get(slotIndex);
         if (slot != null && slot.hasItem()) {
             ItemStack itemstack1 = slot.getItem();
             Item item = itemstack1.getItem();
             itemstack = itemstack1.copy();
-            if (p_40329_ == 1) {
+            if (slotIndex == 3) {
                 item.onCraftedBy(itemstack1, player.level, player);
                 if (!this.moveItemStackTo(itemstack1, 2, 38, true)) {
                     return ItemStack.EMPTY;
                 }
 
                 slot.onQuickCraft(itemstack1, itemstack);
-            } else if (p_40329_ == 0) {
+            } else if (slotIndex == 0) {
                 if (!this.moveItemStackTo(itemstack1, 2, 38, false)) {
                     return ItemStack.EMPTY;
                 }
@@ -192,11 +190,11 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (p_40329_ >= 2 && p_40329_ < 29) {
+            } else if (slotIndex >= 2 && slotIndex < 29) {
                 if (!this.moveItemStackTo(itemstack1, 29, 38, false)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (p_40329_ >= 29 && p_40329_ < 38 && !this.moveItemStackTo(itemstack1, 2, 29, false)) {
+            } else if (slotIndex >= 29 && slotIndex < 38 && !this.moveItemStackTo(itemstack1, 2, 29, false)) {
                 return ItemStack.EMPTY;
             }
 
