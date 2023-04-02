@@ -1,6 +1,5 @@
 package de.lordhahaha.timberframemod.menu;
 
-import ca.weblite.objc.Message;
 import com.google.common.collect.Lists;
 import de.lordhahaha.timberframemod.block.ModBlocks;
 import de.lordhahaha.timberframemod.recipe.WoodworkingBenchRecipe;
@@ -12,7 +11,6 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -56,6 +54,18 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
         super(ModMenuTypes.WOODWORKING_MENU.get(), id);
         this.access = containerLevelAccess;
         this.level = inventory.player.level;
+
+        // Add Inventory Slots
+        for(int i = 0; i < 3; ++i) {
+            for(int j = 0; j < 9; ++j) {
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+            }
+        }
+
+        for(int k = 0; k < 9; ++k) {
+            this.addSlot(new Slot(inventory, k, 8 + k * 18, 142));
+        }
+
         this.inputSlotBlock = this.addSlot(new Slot(this.containerForBlock, 0, 20, 33));
         this.inputSlotExtra = this.addSlot(new Slot(this.containerForExtra, 0, 20, 52));
         this.resultSlot = this.addSlot(new Slot(this.resultContainer, 1, 143, 33) {
@@ -73,7 +83,6 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
                 ItemStack itemStackExtra = WoodworkingBenchMenu.this.inputSlotExtra.remove(recipe.amountIngredient2);
 
                 if (!itemstack.isEmpty() && !itemStackExtra.isEmpty()) {
-                    System.out.println("onTake: SetupResultSlot");
                     WoodworkingBenchMenu.this.setupResultSlot();
                 }
 
@@ -89,16 +98,7 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
             }
         });
 
-        // Add Inventory Slots
-        for(int i = 0; i < 3; ++i) {
-            for(int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-            }
-        }
 
-        for(int k = 0; k < 9; ++k) {
-            this.addSlot(new Slot(inventory, k, 8 + k * 18, 142));
-        }
 
         this.addDataSlot(this.selectedRecipeIndex);
     }
@@ -110,7 +110,6 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
     public boolean clickMenuButton(Player player, int index) {
         if (this.isValidRecipeIndex(index)) {
             this.selectedRecipeIndex.set(index);
-            System.out.println(MessageFormat.format("Selected Index: {0} | {1}", index, getSelectedRecipeIndex()));
             this.setupResultSlot();
         }
 
@@ -161,7 +160,6 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
     }
 
     public boolean canTakeItemForPickAll(ItemStack itemStack, Slot slot) {
-        System.out.println(MessageFormat.format("canTakeItemForPickAll: ", itemStack.getItem().getName(itemStack)));
         return slot.container != this.resultContainer && super.canTakeItemForPickAll(itemStack, slot);
     }
 
@@ -220,7 +218,7 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
     public void removed(Player player) {
         super.removed(player);
         this.resultContainer.removeItemNoUpdate(1);
-        this.access.execute((p_40313_, p_40314_) -> {
+        this.access.execute((level, blockPos) -> {
             this.clearContainer(player, this.containerForBlock);
             this.clearContainer(player, this.containerForExtra);
         });
