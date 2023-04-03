@@ -206,7 +206,9 @@ public class ShutterBlock extends Block{
     @Override
     public void playerWillDestroy(Level level, BlockPos blockPos, BlockState blockState, Player p_49855_) {
         BlockPos toDelete = getConnectedShutter(blockPos, blockState);
-        level.destroyBlock(toDelete, false);
+        Block air = Blocks.AIR;
+        level.setBlock(toDelete, air.defaultBlockState(), 3);
+        //level.destroyBlock(toDelete, false);
 
         // remove Neighbourshutter link in neighbour
         if(blockState.getValue(NEIGHBOUR) != Neighbour.NULL){
