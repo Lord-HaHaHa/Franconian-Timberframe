@@ -214,7 +214,6 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
         return copyOfSourceStack;
     }
 
-
     public void removed(Player player) {
         super.removed(player);
         this.resultContainer.removeItemNoUpdate(1);
