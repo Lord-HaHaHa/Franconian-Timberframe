@@ -1,0 +1,9 @@
+
+{
+    "variants": {
+        "facing=south": { "model": "timberframemod:block/block_overhang" },
+        "facing=north": { "model": "timberframemod:block/block_overhang", "y": 180 },
+        "facing=east":  { "model": "timberframemod:block/block_overhang", "y": 270 },
+        "facing=west":  { "model": "timberframemod:block/block_overhang", "y": 90 }
+    }
+}
