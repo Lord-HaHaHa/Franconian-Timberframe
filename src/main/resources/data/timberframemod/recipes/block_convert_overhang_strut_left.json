@@ -1,0 +1,19 @@
+{
+  "type": "timberframemod:wood_working",
+  "slot1": {
+    "count": 1,
+    "ingredients": [{
+        "item": "timberframemod:block_overhang"
+      }
+    ]
+  },
+  "slot2": {
+    "count": 1,
+    "ingredients": [{
+      "item": "minecraft:stick"
+    }
+    ]
+  },
+  "result": "timberframemod:block_overhang_leftstrut",
+  "count": 1
+}
