@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import de.lordhahaha.timberframemod.Timberframemod;
 import de.lordhahaha.timberframemod.block.ModBlocks;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -21,17 +22,24 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 public class WoodworkingBenchRecipe extends SingleItemRecipe {
-    public int amountIngredient1;
-    public int amountIngredient2;
-    public Ingredient ingredientExtra;
-    public WoodworkingBenchRecipe(ResourceLocation id, String group, Ingredient ingredientMain, Ingredient pingredientExtra, ItemStack itemStack, int amount1, int amount2) {
+    private int amountIngredient1;
+    private int amountIngredient2;
+    private Ingredient ingredientExtra;
+    public WoodworkingBenchRecipe(ResourceLocation id, String group, Ingredient ingredientMain, Ingredient ingredientExtra, ItemStack itemStack, int amount1, int amount2) {
         super(Type.INSTANCE, Serializer.INSTANCE, id, group, ingredientMain, itemStack);
         amountIngredient1 = amount1;
         amountIngredient2 = amount2;
-        ingredientExtra = pingredientExtra;
+        this.ingredientExtra = ingredientExtra;
     }
 
-    public boolean matches(Container container, Level p_44484_) {
+    public NonNullList<Ingredient> getIngredients() {
+        NonNullList<Ingredient> nonnulllist = NonNullList.create();
+        nonnulllist.add(this.ingredient);
+        nonnulllist.add(this.ingredientExtra);
+        return nonnulllist;
+    }
+
+    public boolean matches(Container container, Level level) {
         ItemStack itemStack1 = container.getItem(0);
         ItemStack itemStack2 = container.getItem(1);
         boolean flag = (this.ingredient.test(itemStack1) && itemStack1.getCount() >= amountIngredient1) &&

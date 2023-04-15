@@ -79,8 +79,9 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
 
                 WoodworkingBenchRecipe recipe = recipes.get(getSelectedRecipeIndex());
 
-                ItemStack itemstack = WoodworkingBenchMenu.this.inputSlotBlock.remove(recipe.amountIngredient1);
-                ItemStack itemStackExtra = WoodworkingBenchMenu.this.inputSlotExtra.remove(recipe.amountIngredient2);
+                int[] amounts=recipe.getIngredientsAmount();
+                ItemStack itemstack = WoodworkingBenchMenu.this.inputSlotBlock.remove(amounts[0]);
+                ItemStack itemStackExtra = WoodworkingBenchMenu.this.inputSlotExtra.remove(amounts[1]);
 
                 if (!itemstack.isEmpty() && !itemStackExtra.isEmpty()) {
                     WoodworkingBenchMenu.this.setupResultSlot();
