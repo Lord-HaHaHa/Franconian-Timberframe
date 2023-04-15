@@ -1,10 +1,7 @@
 package de.lordhahaha.timberframemod.block;
 
 import de.lordhahaha.timberframemod.Timberframemod;
-import de.lordhahaha.timberframemod.block.custom.RotationalBlock;
-import de.lordhahaha.timberframemod.block.custom.RotationalDoubleBlock;
-import de.lordhahaha.timberframemod.block.custom.ShutterBlock;
-import de.lordhahaha.timberframemod.block.custom.WoodworkingBenchBlock;
+import de.lordhahaha.timberframemod.block.custom.*;
 import de.lordhahaha.timberframemod.tab.ModCreativeModeTab;
 import de.lordhahaha.timberframemod.item.ModItems;
 import net.minecraft.world.item.BlockItem;
@@ -60,6 +57,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> BLOCK_OVERHANG_INNER = registerBlock("block_overhang_inner", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_OVERHANG_RIGHTSTRUT = registerBlock("block_overhang_rightstrut", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_OVERHANG_LEFTSTRUT = registerBlock("block_overhang_leftstrut", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_OVERHANG_TEST = registerBlock("block_overhang_test", () -> new OverhangBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
 
     // --- Helper-functions ---
     // Register a new Block with Blockitem
