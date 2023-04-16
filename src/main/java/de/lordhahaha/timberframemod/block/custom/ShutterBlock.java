@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -202,7 +203,6 @@ public class ShutterBlock extends Block{
             toggleShutterRow(neighbourShutterState, neighbourShutterPos, level);
         }
     }
-
     @Override
     public void playerWillDestroy(Level level, BlockPos blockPos, BlockState blockState, Player p_49855_) {
         BlockPos toDelete = getConnectedShutter(blockPos, blockState);
