@@ -52,10 +52,9 @@ public class ModBlocks {
     public static final RegistryObject<Block> BLOCK_PEDIMENT_RIGHT = registerBlock("block_pediment_right", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     
     public static final RegistryObject<Block> BLOCK_OVERHANG = registerBlock("block_overhang", () -> new OverhangBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-
     public static final RegistryObject<Block> BLOCK_OVERHANG_RIGHTSTRUT = registerBlock("block_overhang_rightstrut", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_OVERHANG_LEFTSTRUT = registerBlock("block_overhang_leftstrut", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_OVERHANG_TEST = registerBlock("block_overhang_test", () -> new OverhangBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+
     public static final RegistryObject<Block> BLOCK_ROOF = registerBlock("block_roof", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_ROOF_INNER = registerBlock("block_roof_inner", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_ROOF_OUTER = registerBlock("block_roof_outer", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
@@ -65,6 +64,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> BLOCK_ROOF_TOP_CENTER = registerBlock("block_roof_top_center", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_ROOF_TOP_CROSS = registerBlock("block_roof_top_cross", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_ROOF_TOP_END = registerBlock("block_roof_top_end", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_ROOF_MAIN = registerBlock("block_roof_main", () -> new RoofBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
 
     // --- Helper-functions ---
     // Register a new Block with Blockitem
