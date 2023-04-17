@@ -18,6 +18,11 @@
         "facing=east,state=3": { "model": "timberframemod:block/block_roof_gable" },
         "facing=west,state=3": { "model": "timberframemod:block/block_roof_gable", "y": 180 },
         "facing=north,state=3":  { "model": "timberframemod:block/block_roof_gable", "y": 270 },
-        "facing=south,state=3":  { "model": "timberframemod:block/block_roof_gable", "y": 90 }
+        "facing=south,state=3":  { "model": "timberframemod:block/block_roof_gable", "y": 90 },
+
+        "facing=east,state=4": { "model": "timberframemod:block/block_roof_top" },
+        "facing=west,state=4": { "model": "timberframemod:block/block_roof_top", "y": 180 },
+        "facing=north,state=4":  { "model": "timberframemod:block/block_roof_top", "y": 270 },
+        "facing=south,state=4":  { "model": "timberframemod:block/block_roof_top", "y": 90 }
     }
 }
