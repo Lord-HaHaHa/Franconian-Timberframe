@@ -3,9 +3,6 @@ package de.lordhahaha.timberframemod.block.custom;
 import de.lordhahaha.timberframemod.block.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -16,12 +13,20 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
-import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
 
 public class RoofBlock extends Block{
+    static final int STATE_ROOF = 0;
+    static final int STATE_CORNER_OUTER = 1;
+    static final int STATE_CORNER_INNER = 2;
+    static final int STATE_GABLE = 3;
+    static final int STATE_TOP = 4;
+    static final int STATE_TOP_EDGE = 5;
+    static final int STATE_TOP_CROSS = 6;
+    static final int STATE_TOP_T = 7;
+    static final int STATE_TOP_L = 8;
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final DirectionProperty FACING_ORG = DirectionProperty.create("facing_org", Direction.Plane.HORIZONTAL);
@@ -31,7 +36,7 @@ public class RoofBlock extends Block{
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING_ORG, Direction.NORTH));
-        this.registerDefaultState(this.stateDefinition.any().setValue(STATE, 3));
+        this.registerDefaultState(this.stateDefinition.any().setValue(STATE, STATE_GABLE));
     }
 
     @Nullable
@@ -39,15 +44,14 @@ public class RoofBlock extends Block{
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Level level = context.getLevel();
         BlockPos blockPos = context.getClickedPos();
-        int state = this.defaultBlockState().getValue(STATE);
-        BlockState blockStateBehind = context.getLevel().getBlockState(context.getClickedPos().relative(context.getHorizontalDirection()));
+        //BlockState blockStateBehind = context.getLevel().getBlockState(context.getClickedPos().relative(context.getHorizontalDirection()));
 
         BlockState blockState = this.defaultBlockState()
                 .setValue(FACING, context.getHorizontalDirection())
                 .setValue(FACING_ORG, context.getHorizontalDirection())
-                .setValue(STATE, state);
+                .setValue(STATE, this.defaultBlockState().getValue(STATE));
 
-        blockState = checkForPediment(blockState, level, blockPos, false);
+        blockState = checkForGable(blockState, level, blockPos, false);
         blockState = checkForTop(blockState, level, blockPos, false);
         blockState = checkForCorner(blockState, level, blockPos, false);
         return blockState;
@@ -62,8 +66,8 @@ public class RoofBlock extends Block{
         System.out.println(MessageFormat.format("OWNPOS: {0} Neighbor: {1}", blockPos, blockPosNeighbor));
 
         if(block.equals(Blocks.AIR) || block.equals(ROOF_BLOCK)){
-            if(blockState.getValue(STATE) < 4)
-                checkForPediment(blockState, level, blockPos, true);
+            if(blockState.getValue(STATE) < STATE_TOP && level.getBlockState(blockPosNeighbor.below()).getBlock().equals(Blocks.AIR))
+                checkForGable(blockState, level, blockPos, true);
             checkForTop(blockState, level, blockPos, true);
         }
 
@@ -89,7 +93,7 @@ public class RoofBlock extends Block{
             if((level.getBlockState(blockPosSideClockwise).getBlock().equals(ROOF_BLOCK) ||
                     level.getBlockState(blockPosSideCounterClockwise).getBlock().equals(ROOF_BLOCK)) &&
                 !level.getBlockState(blockPosSideClockwise).getBlock().equals(level.getBlockState(blockPosSideCounterClockwise).getBlock())){
-                if(blockState.getValue(STATE) == 0 || blockState.getValue(STATE) == 3)
+                if(blockState.getValue(STATE) == STATE_ROOF || blockState.getValue(STATE) == STATE_GABLE)
                 {
                     // Checks if it´s an outer or inner coner
                     if(level.getBlockState(blockPosBehind).getBlock().equals(ROOF_BLOCK)) {
@@ -99,14 +103,14 @@ public class RoofBlock extends Block{
                         {
                             blockState = blockState.setValue(FACING, blockState.getValue(FACING).getCounterClockWise());
                         }
-                        blockState = blockState.setValue(STATE, 1);
+                        blockState = blockState.setValue(STATE, STATE_CORNER_OUTER);
                     }
                     else{
                         // rotate facing for the corner block
                         if (level.getBlockState(blockPosSideClockwise).getBlock().equals(ROOF_BLOCK))
                             blockState = blockState.setValue(FACING, blockState.getValue(FACING).getCounterClockWise());
 
-                        blockState = blockState.setValue(STATE, 2);
+                        blockState = blockState.setValue(STATE, STATE_CORNER_INNER);
                     }
                     update = true;
                 }
@@ -119,31 +123,37 @@ public class RoofBlock extends Block{
         return blockState;
     }
 
-    public BlockState checkForPediment(BlockState blockState, Level level, BlockPos blockPos, boolean place){
-        // Checks if a given Block is a Pediment
+    public BlockState checkForGable(BlockState blockState, Level level, BlockPos blockPos, boolean place){
+        // Checks if a given Block is a Gable
         boolean update = false;
+
+        //do not change if Corner already set
+        if( (blockState.getValue(STATE) == STATE_CORNER_OUTER || blockState.getValue(STATE) == STATE_CORNER_INNER))
+            return blockState;
 
         BlockPos blockPosSideClockwise = blockPos.relative(blockState.getValue(FACING).getClockWise());
         BlockPos blockPosSideCounterClockwise = blockPos.relative(blockState.getValue(FACING).getCounterClockWise());
 
-        Block blockClockwise = level.getBlockState(blockPosSideClockwise).getBlock();
-        Block blockCounterClockwise = level.getBlockState(blockPosSideCounterClockwise).getBlock();
-        Block blockInfront = level.getBlockState(blockPos.relative(blockState.getValue(FACING))).getBlock();
-        Block blockBehind = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getOpposite())).getBlock();
-        if((blockClockwise.equals(ROOF_BLOCK) && blockCounterClockwise.equals(ROOF_BLOCK)) || (
-                blockInfront.equals(ROOF_BLOCK) && blockBehind.equals(ROOF_BLOCK))
+        Block blockBelow = level.getBlockState(blockPos.below()).getBlock();
+        //Block blockClockwise = level.getBlockState(blockPosSideClockwise).getBlock();
+        //Block blockCounterClockwise = level.getBlockState(blockPosSideCounterClockwise).getBlock();
+        //Block blockInfront = level.getBlockState(blockPos.relative(blockState.getValue(FACING))).getBlock();
+        //Block blockBehind = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getOpposite())).getBlock();
+        if(
+//                (blockClockwise.equals(ROOF_BLOCK) && blockCounterClockwise.equals(ROOF_BLOCK)) ||
+//                (blockInfront.equals(ROOF_BLOCK) && blockBehind.equals(ROOF_BLOCK) ) ||
+                blockBelow.equals(Blocks.AIR)
         )
         {
-            if(blockState.getValue(STATE) != 0){
+            if(blockState.getValue(STATE) != STATE_ROOF){
                     update = true;
                     blockState = blockState.setValue(FACING, blockState.getValue(FACING_ORG));
-                    blockState = blockState.setValue(STATE,0);
+                    blockState = blockState.setValue(STATE, STATE_ROOF);
             }
         } else{
-            if(!(blockState.getValue(STATE) == 1 || blockState.getValue(STATE) == 2))
-                if(blockState.getValue(STATE) != 3){
+                if(blockState.getValue(STATE) != STATE_GABLE){
                     update = true;
-                    blockState = blockState.setValue(STATE, 3);
+                    blockState = blockState.setValue(STATE, STATE_GABLE);
                 }
         }
 
@@ -180,19 +190,19 @@ public class RoofBlock extends Block{
         int neighbor = 0;
         // set on bit for each Neighbor ROOF_BLOCK
         if(blockClockwise.equals(ROOF_BLOCK))
-            if(level.getBlockState(blockPosSideClockwise).getValue(STATE) >= 4)
+            if(level.getBlockState(blockPosSideClockwise).getValue(STATE) >= STATE_TOP)
                 neighbor += 1;
 
         if(blockInfront.equals(ROOF_BLOCK))
-            if(level.getBlockState(blockPosInfront).getValue(STATE) >= 4)
+            if(level.getBlockState(blockPosInfront).getValue(STATE) >= STATE_TOP)
                 neighbor += 2;
 
         if(blockCounterClockwise.equals(ROOF_BLOCK))
-            if(level.getBlockState(blockPosSideCounterClockwise).getValue(STATE) >= 4)
+            if(level.getBlockState(blockPosSideCounterClockwise).getValue(STATE) >= STATE_TOP)
                 neighbor += 4;
 
         if(blockBehind.equals(ROOF_BLOCK))
-            if(level.getBlockState(blockPosBehind).getValue(STATE) >= 4)
+            if(level.getBlockState(blockPosBehind).getValue(STATE) >= STATE_TOP)
                 neighbor += 8;
 
         // Test if a Block is a Top-Block
@@ -204,13 +214,13 @@ public class RoofBlock extends Block{
             {
                 System.out.println("Set as Top");
                 // Set Block to a Top Block
-                if(blockState.getValue(STATE) != 4) {
+                if(blockState.getValue(STATE) != STATE_TOP) {
                     // Rotate block if neihbors are not in line with the Block
                     if(neighbor == 10) {
                         blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
                     }
                     update = true;
-                    blockState = blockState.setValue(STATE,4); // Set to Top
+                    blockState = blockState.setValue(STATE, STATE_TOP); // Set to Top
                 }
             } else{
                 // Set Block to a Top-Edge Block
@@ -224,32 +234,32 @@ public class RoofBlock extends Block{
                         blockState = blockState.setValue(FACING, blockState.getValue(FACING).getOpposite()); // Rotate so the Block is facing in the right Direction
 
                     update = true;
-                    blockState = blockState.setValue(STATE, 5); // Set to Top-End
+                    blockState = blockState.setValue(STATE, STATE_TOP_EDGE); // Set to Top-End
                 }
             }
         }else {
             // Check if Block is a Top-Center Block (all side are roofs)
             if(neighbor == 15){
-                if(blockState.getValue(STATE) != 6){
+                if(blockState.getValue(STATE) != STATE_TOP_CROSS){
                     update = true;
-                    blockState = blockState.setValue(STATE, 6); // Set to Top-Center
+                    blockState = blockState.setValue(STATE, STATE_TOP_CROSS); // Set to Top-Center
                 }
             }else{
                 // Check if Block is a 3Way-Top Block
                 if(neighbor == 7 || neighbor == 11 || neighbor == 13 || neighbor == 14){
                     // Set block to 3Way-Top Block
-                    if(blockState.getValue(STATE) != 7){
+                    if(blockState.getValue(STATE) != STATE_TOP_T){
                         update = true;
-                        blockState = blockState.setValue(STATE, 7);
+                        blockState = blockState.setValue(STATE, STATE_TOP_T);
                     }
                 } else {
                     // Check if Block is a 2 Way-Top Block
                     if(neighbor == 3 || neighbor == 6 || neighbor == 12 || neighbor == 9){
                         // Set block to 2Way-Top Block
                         {
-                            if(blockState.getValue(STATE) != 8){
+                            if(blockState.getValue(STATE) != STATE_TOP_L){
                                 update = true;
-                                blockState = blockState.setValue(STATE, 8);
+                                blockState = blockState.setValue(STATE, STATE_TOP_L);
                             }
                         }
                     }
