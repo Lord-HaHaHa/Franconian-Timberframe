@@ -75,7 +75,7 @@ public class RoofBlock extends Block{
             checkForCorner(blockState, level, blockPos, true);
         }
     }
-
+    //TODO: remove corner when in line
     public BlockState checkForCorner(BlockState blockState, Level level, BlockPos blockPos, boolean place){
         boolean update = false;
 
@@ -182,28 +182,12 @@ public class RoofBlock extends Block{
         BlockPos blockPosInfront = blockPos.relative(blockState.getValue(FACING));
         BlockPos blockPosBehind = blockPos.relative(blockState.getValue(FACING).getOpposite());
 
-        Block blockInfront = level.getBlockState(blockPosInfront).getBlock();
-        Block blockBehind = level.getBlockState(blockPosBehind).getBlock();
-        Block blockClockwise = level.getBlockState(blockPosSideClockwise).getBlock();
-        Block blockCounterClockwise = level.getBlockState(blockPosSideCounterClockwise).getBlock();
-
-        int neighbor = 0;
+        int neighbor =
         // set on bit for each Neighbor ROOF_BLOCK
-        if(blockClockwise.equals(ROOF_BLOCK))
-            if(level.getBlockState(blockPosSideClockwise).getValue(STATE) >= STATE_TOP)
-                neighbor += 1;
-
-        if(blockInfront.equals(ROOF_BLOCK))
-            if(level.getBlockState(blockPosInfront).getValue(STATE) >= STATE_TOP)
-                neighbor += 2;
-
-        if(blockCounterClockwise.equals(ROOF_BLOCK))
-            if(level.getBlockState(blockPosSideCounterClockwise).getValue(STATE) >= STATE_TOP)
-                neighbor += 4;
-
-        if(blockBehind.equals(ROOF_BLOCK))
-            if(level.getBlockState(blockPosBehind).getValue(STATE) >= STATE_TOP)
-                neighbor += 8;
+             getNeighbor(level, blockPosSideClockwise) |
+             getNeighbor(level, blockPosInfront) << 1 |
+             getNeighbor(level, blockPosSideCounterClockwise) << 2 |
+             getNeighbor(level, blockPosBehind) << 3;
 
         // Test if a Block is a Top-Block
         if((blockBelowInfront.equals(ROOF_BLOCK) && blockBelowBehind.equals(ROOF_BLOCK) ||
@@ -273,6 +257,20 @@ public class RoofBlock extends Block{
         }
         return blockState;
     }
+
+    /**
+     * @param level
+     * @param pos
+     * @return 1 if neighbor is a roof_top type block, otherwise 0
+     */
+    private int getNeighbor(Level level, BlockPos pos) {
+        Block block = level.getBlockState(pos).getBlock();
+        if(block.equals(ROOF_BLOCK))
+            if(level.getBlockState(pos).getValue(STATE) >= STATE_TOP)
+                return 1;
+        return 0;
+    }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
