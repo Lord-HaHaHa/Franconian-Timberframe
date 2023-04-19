@@ -8,9 +8,12 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.GlassBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -66,6 +69,10 @@ public class ModBlocks {
     public static final RegistryObject<Block> BLOCK_ROOF_TOP_CROSS = registerBlock("block_roof_top_cross", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_ROOF_TOP_END = registerBlock("block_roof_top_end", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_ROOF_MAIN = registerBlock("block_roof_main", () -> new RoofBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_1x1 = registerBlock("block_window_1x1", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_1xn_TOP = registerBlock("block_window_1xn_top", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_1x1_MIDDLE = registerBlock("block_window_1xn_middle", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_1x1_BOTTOM = registerBlock("block_window_1xn_bottom", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
 
     // --- Helper-functions ---
     // Register a new Block with Blockitem
