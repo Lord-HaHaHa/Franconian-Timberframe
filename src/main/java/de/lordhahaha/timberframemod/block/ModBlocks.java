@@ -69,6 +69,8 @@ public class ModBlocks {
     public static final RegistryObject<Block> BLOCK_ROOF_TOP_CROSS = registerBlock("block_roof_top_cross", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_ROOF_TOP_END = registerBlock("block_roof_top_end", () -> new RotationalBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_ROOF_MAIN = registerBlock("block_roof_main", () -> new RoofBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_ROOF_TRUSS = registerBlock("block_roof_truss", () -> new RoofTrussBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_ROOF_TRUSS_STAND = registerBlock("block_roof_truss_stand", () -> new RoofTrussBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_WINDOW_1x1 = registerBlock("block_window_1x1", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_WINDOW_1xn_TOP = registerBlock("block_window_1xn_top", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_WINDOW_1x1_MIDDLE = registerBlock("block_window_1xn_middle", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);

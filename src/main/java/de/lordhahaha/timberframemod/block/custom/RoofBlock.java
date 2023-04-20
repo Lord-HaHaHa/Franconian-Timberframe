@@ -1,5 +1,6 @@
 package de.lordhahaha.timberframemod.block.custom;
 
+import de.lordhahaha.timberframemod.Timberframemod;
 import de.lordhahaha.timberframemod.block.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -149,7 +150,15 @@ public class RoofBlock extends Block{
         if(
 //                (blockClockwise.equals(ROOF_BLOCK) && blockCounterClockwise.equals(ROOF_BLOCK)) ||
 //                (blockInfront.equals(ROOF_BLOCK) && blockBehind.equals(ROOF_BLOCK) ) ||
-                blockBelow.equals(Blocks.AIR)
+                blockBelow.equals(Blocks.AIR) ||
+                        blockBelow.equals(ModBlocks.BLOCK_ROOF_MAIN.get()) ||
+                        blockBelow.equals(ModBlocks.BLOCK_ROOF_INNER.get()) ||
+                        blockBelow.equals(ModBlocks.BLOCK_ROOF_OUTER.get()) ||
+                        blockBelow.equals(ModBlocks.BLOCK_OVERHANG.get()) ||
+                        blockBelow.equals(ModBlocks.BLOCK_OVERHANG_LEFTSTRUT.get()) ||
+                        blockBelow.equals(ModBlocks.BLOCK_OVERHANG_RIGHTSTRUT.get()) ||
+                blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS.get()) ||
+                blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_STAND.get())
         )
         {
             if(blockState.getValue(STATE) != STATE_ROOF){
