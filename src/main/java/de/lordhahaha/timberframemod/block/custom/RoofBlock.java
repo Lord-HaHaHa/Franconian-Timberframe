@@ -71,7 +71,7 @@ public class RoofBlock extends Block{
             checkForTop(blockState, level, blockPos, true);
         }
 
-        if(block.equals(Blocks.AIR)) { // Only check if ew block is placeda n
+        if(block.equals(Blocks.AIR)) { // Only check if a new block is placed
             checkForCorner(blockState, level, blockPos, true);
         }
     }
@@ -92,7 +92,7 @@ public class RoofBlock extends Block{
 
             if((level.getBlockState(blockPosSideClockwise).getBlock().equals(ROOF_BLOCK) ||
                     level.getBlockState(blockPosSideCounterClockwise).getBlock().equals(ROOF_BLOCK)) &&
-                !level.getBlockState(blockPosSideClockwise).getBlock().equals(level.getBlockState(blockPosSideCounterClockwise).getBlock())){
+                    !level.getBlockState(blockPosSideClockwise).getBlock().equals(level.getBlockState(blockPosSideCounterClockwise).getBlock())){
                 if(blockState.getValue(STATE) == STATE_ROOF || blockState.getValue(STATE) == STATE_GABLE)
                 {
                     // Checks if it´s an outer or inner coner
@@ -123,6 +123,13 @@ public class RoofBlock extends Block{
         return blockState;
     }
 
+    /**
+     * @param blockState State of the Roof Block
+     * @param level
+     * @param blockPos Position of the Block
+     * @param place true if the Method place the Block
+     * @return adjusted BlockState for the RoofBlock
+     */
     public BlockState checkForGable(BlockState blockState, Level level, BlockPos blockPos, boolean place){
         // Checks if a given Block is a Gable
         boolean update = false;
@@ -177,48 +184,45 @@ public class RoofBlock extends Block{
         Block blockBelowClockwise = level.getBlockState(blockPosBelowClockwisePos).getBlock();
         Block blockBelowCounterClockwise = level.getBlockState(blockPosBelowCounterClockwisePos).getBlock();
 
-        BlockPos blockPosSideClockwise = blockPos.relative(blockState.getValue(FACING).getClockWise());
-        BlockPos blockPosSideCounterClockwise = blockPos.relative(blockState.getValue(FACING).getCounterClockWise());
-        BlockPos blockPosInfront = blockPos.relative(blockState.getValue(FACING));
-        BlockPos blockPosBehind = blockPos.relative(blockState.getValue(FACING).getOpposite());
-
-        int neighbor =
-        // set on bit for each Neighbor ROOF_BLOCK
-             getNeighbor(level, blockPosSideClockwise) |
-             getNeighbor(level, blockPosInfront) << 1 |
-             getNeighbor(level, blockPosSideCounterClockwise) << 2 |
-             getNeighbor(level, blockPosBehind) << 3;
+        int neighbor = getNeighbor(level, blockState, blockPos);
 
         // Test if a Block is a Top-Block
         if((blockBelowInfront.equals(ROOF_BLOCK) && blockBelowBehind.equals(ROOF_BLOCK) ||
                 blockBelowClockwise.equals(ROOF_BLOCK) && blockBelowCounterClockwise.equals(ROOF_BLOCK)))
         {
             // Test if a Top Block has 2 Neighbors on one Axis
-            if((neighbor == 5 || neighbor == 10))
+            if(neighbor == 5 || neighbor == 10)
             {
-                System.out.println("Set as Top");
                 // Set Block to a Top Block
                 if(blockState.getValue(STATE) != STATE_TOP) {
                     // Rotate block if neihbors are not in line with the Block
-                    if(neighbor == 10) {
+                    if(neighbor == 5) {
                         blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
                     }
                     update = true;
-                    blockState = blockState.setValue(STATE, STATE_TOP); // Set to Top
+                    blockState = blockState.setValue(STATE, STATE_TOP);
                 }
-            } else{
-                // Set Block to a Top-Edge Block
-                if(blockState.getValue(STATE) != 5 || neighbor == 1 || neighbor == 4){
-                    // Rotate Edge block depending on neighbor
-                    if(neighbor == 8)
-                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getCounterClockWise());
-                    if(neighbor == 2)
+            } else {
+                if(neighbor == 0 || neighbor == 1 || neighbor == 2 || neighbor == 4 || neighbor == 8) // Check if it has none / only 1 Neighbor
+                {
+                    BlockState backupBlockState = blockState;
+                    // Rotate Block 90deg if placed vertical on rooftop
+                    if(blockBelowInfront.equals(ROOF_BLOCK) && blockBelowBehind.equals(ROOF_BLOCK))
+                    {
                         blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
-                    if(neighbor == 1)
+                    }
+
+                    //Update neighbor after Rotation for inline Placement to determan if edge needs to be fliped
+                    neighbor = getNeighbor(level, blockState, blockPos);
+
+                    // Rotate 180deg if Edge block is facing to a anthoer EdgeBlock
+                    if(neighbor == 8)
                         blockState = blockState.setValue(FACING, blockState.getValue(FACING).getOpposite()); // Rotate so the Block is facing in the right Direction
 
-                    update = true;
-                    blockState = blockState.setValue(STATE, STATE_TOP_EDGE); // Set to Top-End
+                    if(!blockState.equals(backupBlockState)) {
+                        update = true;
+                        blockState = blockState.setValue(STATE, STATE_TOP_EDGE);
+                    }
                 }
             }
         }else {
@@ -226,22 +230,26 @@ public class RoofBlock extends Block{
             if(neighbor == 15){
                 if(blockState.getValue(STATE) != STATE_TOP_CROSS){
                     update = true;
-                    blockState = blockState.setValue(STATE, STATE_TOP_CROSS); // Set to Top-Center
+                    blockState = blockState.setValue(STATE, STATE_TOP_CROSS);
                 }
-            }else{
+            } else {
                 // Check if Block is a 3Way-Top Block
-                if(neighbor == 7 || neighbor == 11 || neighbor == 13 || neighbor == 14){
+                if(neighbor == 7 || neighbor == 11 || neighbor == 13 || neighbor == 14){ // Check if it has 3 neighbors
                     // Set block to 3Way-Top Block
                     if(blockState.getValue(STATE) != STATE_TOP_T){
+                        //TODO Correct the rotation depending on neighbors
+
                         update = true;
                         blockState = blockState.setValue(STATE, STATE_TOP_T);
                     }
                 } else {
                     // Check if Block is a 2 Way-Top Block
-                    if(neighbor == 3 || neighbor == 6 || neighbor == 12 || neighbor == 9){
+                    if(neighbor == 3 || neighbor == 6 || neighbor == 12 || neighbor == 9){ // Check if Block has 2 neighbors
                         // Set block to 2Way-Top Block
                         {
                             if(blockState.getValue(STATE) != STATE_TOP_L){
+                                //TODO Correct the rotation depending on neighbors
+
                                 update = true;
                                 blockState = blockState.setValue(STATE, STATE_TOP_L);
                             }
@@ -269,6 +277,22 @@ public class RoofBlock extends Block{
             if(level.getBlockState(pos).getValue(STATE) >= STATE_TOP)
                 return 1;
         return 0;
+    }
+
+    private int getNeighbor(Level level, BlockState blockState, BlockPos blockPos){
+
+        BlockPos blockPosSideClockwise = blockPos.relative(blockState.getValue(FACING).getClockWise());
+        BlockPos blockPosSideCounterClockwise = blockPos.relative(blockState.getValue(FACING).getCounterClockWise());
+        BlockPos blockPosInfront = blockPos.relative(blockState.getValue(FACING));
+        BlockPos blockPosBehind = blockPos.relative(blockState.getValue(FACING).getOpposite());
+
+        // set on bit for each Neighbor ROOF_BLOCK
+        int neighbor =
+                getNeighbor(level, blockPosSideClockwise) |
+                        getNeighbor(level, blockPosInfront) << 1 |
+                        getNeighbor(level, blockPosSideCounterClockwise) << 2 |
+                        getNeighbor(level, blockPosBehind) << 3;
+        return neighbor;
     }
 
     @Override
