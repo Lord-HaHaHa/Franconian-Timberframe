@@ -5,6 +5,7 @@ import de.lordhahaha.timberframemod.block.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -14,9 +15,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
+import java.util.stream.IntStream;
 
 public class RoofBlock extends Block{
     static final int STATE_ROOF = 0;
@@ -29,6 +34,25 @@ public class RoofBlock extends Block{
     static final int STATE_TOP_T = 7;
     static final int STATE_TOP_L = 8;
 
+    private static final VoxelShape TOP_SHAPE = Block.box(0,0,0,16,5,16);
+    private static final VoxelShape BASE_SHAPE = Block.box(0,0,0,16,8,16);
+    protected static final VoxelShape OCTET_NNN = Block.box(0.0D, 0.0D, 0.0D, 8.0D, 8.0D, 8.0D);
+    protected static final VoxelShape OCTET_NNP = Block.box(0.0D, 0.0D, 8.0D, 8.0D, 8.0D, 16.0D);
+    protected static final VoxelShape OCTET_NPN = Block.box(0.0D, 8.0D, 0.0D, 8.0D, 16.0D, 8.0D);
+    protected static final VoxelShape OCTET_NPP = Block.box(0.0D, 8.0D, 8.0D, 8.0D, 16.0D, 16.0D);
+    protected static final VoxelShape OCTET_PNN = Block.box(8.0D, 0.0D, 0.0D, 16.0D, 8.0D, 8.0D);
+    protected static final VoxelShape OCTET_PNP = Block.box(8.0D, 0.0D, 8.0D, 16.0D, 8.0D, 16.0D);
+    protected static final VoxelShape OCTET_PPN = Block.box(8.0D, 8.0D, 0.0D, 16.0D, 16.0D, 8.0D);
+    protected static final VoxelShape OCTET_PPP = Block.box(8.0D, 8.0D, 8.0D, 16.0D, 16.0D, 16.0D);
+    //protected static final VoxelShape[] TOP_SHAPES = makeShapes(BASE_SHAPE, OCTET_NNN, OCTET_PNN, OCTET_NNP, OCTET_PNP);
+    protected static final VoxelShape[] BOTTOM_SHAPES = makeShapes(BASE_SHAPE, OCTET_NPN, OCTET_PPN, OCTET_NPP, OCTET_PPP);
+    private static final int[] SHAPE_BY_STATE = new int[]{
+            0b1100, 0b0101, 0b0011, 0b1010,  //ROOF
+            0b0100, 0b0001, 0b0010, 0b1000,  //CORNER_OUTER
+            0b1101, 0b0111, 0b1011, 0b1110,  //CORNER_INNER
+            0b1100, 0b0101, 0b0011, 0b1010   //GABLE
+            };
+
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final DirectionProperty FACING_ORG = DirectionProperty.create("facing_org", Direction.Plane.HORIZONTAL);
     public static final IntegerProperty STATE = IntegerProperty.create("state", 0, 8);
@@ -38,6 +62,49 @@ public class RoofBlock extends Block{
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING_ORG, Direction.NORTH));
         this.registerDefaultState(this.stateDefinition.any().setValue(STATE, STATE_GABLE));
+    }
+    private static VoxelShape[] makeShapes(VoxelShape shape1, VoxelShape shape2, VoxelShape shape3, VoxelShape shape4, VoxelShape shape5) {
+        return IntStream.range(0, 16).mapToObj((state) -> {
+            return makeStairShape(state, shape1, shape2, shape3, shape4, shape5);
+        }).toArray((p_56949_) -> {
+            return new VoxelShape[p_56949_];
+        });
+    }
+
+    private static VoxelShape makeStairShape(int state, VoxelShape shape1, VoxelShape shape2, VoxelShape shape3, VoxelShape shape4, VoxelShape shape5) {
+        VoxelShape voxelshape = shape1;
+        if ((state & 1) != 0) {
+            voxelshape = Shapes.or(shape1, shape2);
+        }
+
+        if ((state & 2) != 0) {
+            voxelshape = Shapes.or(voxelshape, shape3);
+        }
+
+        if ((state & 4) != 0) {
+            voxelshape = Shapes.or(voxelshape, shape4);
+        }
+
+        if ((state & 8) != 0) {
+            voxelshape = Shapes.or(voxelshape, shape5);
+        }
+
+        return voxelshape;
+    }
+
+    private int getShapeIndex(BlockState state) {
+        return state.getValue(STATE) * 4 + state.getValue(FACING).get2DDataValue();
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+        if ( blockState.getValue(STATE) < STATE_TOP) {
+            return (BOTTOM_SHAPES)[SHAPE_BY_STATE[this.getShapeIndex(blockState)]];
+        }
+        else{
+            return TOP_SHAPE;
+        }
+        //return super.getShape(blockState, blockGetter, blockPos, collisionContext);
     }
 
     @Nullable
