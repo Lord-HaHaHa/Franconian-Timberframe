@@ -215,17 +215,23 @@ public class RoofBlock extends Block{
         //Block blockInfront = level.getBlockState(blockPos.relative(blockState.getValue(FACING))).getBlock();
         //Block blockBehind = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getOpposite())).getBlock();
         if(
-//                (blockClockwise.equals(ROOF_BLOCK) && blockCounterClockwise.equals(ROOF_BLOCK)) ||
-//                (blockInfront.equals(ROOF_BLOCK) && blockBehind.equals(ROOF_BLOCK) ) ||
-                blockBelow.equals(Blocks.AIR) ||
-                        blockBelow.equals(ModBlocks.BLOCK_ROOF_MAIN.get()) ||
-                        blockBelow.equals(ModBlocks.BLOCK_ROOF_INNER.get()) ||
-                        blockBelow.equals(ModBlocks.BLOCK_ROOF_OUTER.get()) ||
-                        blockBelow.equals(ModBlocks.BLOCK_OVERHANG.get()) ||
-                        blockBelow.equals(ModBlocks.BLOCK_OVERHANG_LEFTSTRUT.get()) ||
-                        blockBelow.equals(ModBlocks.BLOCK_OVERHANG_RIGHTSTRUT.get()) ||
-                blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS.get()) ||
-                blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_STAND.get())
+            // (blockClockwise.equals(ROOF_BLOCK) && blockCounterClockwise.equals(ROOF_BLOCK)) ||
+            // (blockInfront.equals(ROOF_BLOCK) && blockBehind.equals(ROOF_BLOCK) ) ||
+            blockBelow.equals(Blocks.AIR) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_MAIN.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_INNER.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_OUTER.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_OVERHANG.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_OVERHANG_LEFTSTRUT.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_OVERHANG_RIGHTSTRUT.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_2WAY.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_3WAY.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_4WAY.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_EDGE.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_STAND_2WAY.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_STAND_3WAY.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_STAND_SOLO.get()) ||
+            blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_STAND_EDGE.get())
         )
         {
             if(blockState.getValue(STATE) != STATE_ROOF){
