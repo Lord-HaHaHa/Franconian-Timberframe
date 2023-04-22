@@ -1,0 +1,19 @@
+{
+  "type": "timberframemod:wood_working",
+  "slot1": {
+    "count": 1,
+    "ingredients": [{
+        "item": "minecraft:terracotta"
+      }
+    ]
+  },
+  "slot2": {
+    "count": 2,
+    "ingredients": [{
+      "item": "minecraft:stick"
+    }
+    ]
+  },
+  "result": "timberframemod:block_roof_main",
+  "count": 1
+}
