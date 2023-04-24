@@ -134,12 +134,16 @@ public class RoofBlock extends Block{
         System.out.println(MessageFormat.format("OWNPOS: {0} Neighbor: {1}", blockPos, blockPosNeighbor));
 
         if(block.equals(Blocks.AIR) || block.equals(ROOF_BLOCK)){
-            if(blockState.getValue(STATE) < STATE_TOP && level.getBlockState(blockPosNeighbor.below()).getBlock().equals(Blocks.AIR))
+            if((blockState.getValue(STATE) < STATE_TOP && level.getBlockState(blockPosNeighbor.below()).getBlock().equals(Blocks.AIR)) ||
+                blockState.getValue(STATE) == STATE_CORNER_INNER || blockState.getValue(STATE) == STATE_CORNER_OUTER){
+                System.out.println(MessageFormat.format("Check Gable with: {0}", blockPos));
                 checkForGable(blockState, level, blockPos, true);
+            }
             checkForTop(blockState, level, blockPos, true);
         }
 
         if(block.equals(Blocks.AIR)) { // Only check if a new block is placed
+            System.out.println("Check for Corner");
             checkForCorner(blockState, level, blockPos, true);
         }
     }
@@ -186,6 +190,7 @@ public class RoofBlock extends Block{
         }
 
         if(update && place){
+            System.out.println("Set Corner");
             level.setBlockAndUpdate(blockPos, blockState);
         }
         return blockState;
@@ -202,21 +207,20 @@ public class RoofBlock extends Block{
         // Checks if a given Block is a Gable
         boolean update = false;
 
-        //do not change if Corner already set
-        if( (blockState.getValue(STATE) == STATE_CORNER_OUTER || blockState.getValue(STATE) == STATE_CORNER_INNER))
-            return blockState;
+        BlockState blockStateClockwise = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getClockWise()));
+        BlockState blockStateCounterClockwise = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getCounterClockWise()));
+        BlockState blockStateBehind = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getOpposite()));
+        BlockState blockStateInfront = level.getBlockState(blockPos.relative(blockState.getValue(FACING)));
 
-        BlockPos blockPosSideClockwise = blockPos.relative(blockState.getValue(FACING).getClockWise());
-        BlockPos blockPosSideCounterClockwise = blockPos.relative(blockState.getValue(FACING).getCounterClockWise());
+        //do not change if Corner it is not in line with other Roof-Blocks
+        if((blockStateClockwise.getBlock() != blockStateCounterClockwise.getBlock() && blockStateInfront.getBlock() != blockStateBehind.getBlock())) {
+            return blockState;
+        }
 
         Block blockBelow = level.getBlockState(blockPos.below()).getBlock();
-        //Block blockClockwise = level.getBlockState(blockPosSideClockwise).getBlock();
-        //Block blockCounterClockwise = level.getBlockState(blockPosSideCounterClockwise).getBlock();
-        //Block blockInfront = level.getBlockState(blockPos.relative(blockState.getValue(FACING))).getBlock();
-        //Block blockBehind = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getOpposite())).getBlock();
+
+        //TODO mai-bee use ItemTag
         if(
-            // (blockClockwise.equals(ROOF_BLOCK) && blockCounterClockwise.equals(ROOF_BLOCK)) ||
-            // (blockInfront.equals(ROOF_BLOCK) && blockBehind.equals(ROOF_BLOCK) ) ||
             blockBelow.equals(Blocks.AIR) ||
             blockBelow.equals(ModBlocks.BLOCK_ROOF_MAIN.get()) ||
             blockBelow.equals(ModBlocks.BLOCK_ROOF_INNER.get()) ||
@@ -236,7 +240,6 @@ public class RoofBlock extends Block{
         {
             if(blockState.getValue(STATE) != STATE_ROOF){
                     update = true;
-                    blockState = blockState.setValue(FACING, blockState.getValue(FACING_ORG));
                     blockState = blockState.setValue(STATE, STATE_ROOF);
             }
         } else{
@@ -247,6 +250,10 @@ public class RoofBlock extends Block{
         }
 
         if(update && place){
+            // Reset earlier Rotations
+            if(blockState.getValue(FACING) != blockState.getValue(FACING_ORG))
+                blockState = blockState.setValue(FACING, blockState.getValue(FACING_ORG));
+
             level.setBlockAndUpdate(blockPos, blockState);
         }
         return blockState;
@@ -319,7 +326,6 @@ public class RoofBlock extends Block{
                 if(neighbor == 7 || neighbor == 11 || neighbor == 13 || neighbor == 14){ // Check if it has 3 neighbors
                     // Set block to 3Way-Top Block
                     if(blockState.getValue(STATE) != STATE_TOP_T){
-                        //TODO Correct the rotation depending on
 
                         // Reset earlier Rotations
                         if(blockState.getValue(FACING) != blockState.getValue(FACING_ORG)) {
@@ -405,9 +411,9 @@ public class RoofBlock extends Block{
         // set on bit for each Neighbor ROOF_BLOCK
         int neighbor =
                 getNeighbor(level, blockPosSideClockwise) |
-                        getNeighbor(level, blockPosInfront) << 1 |
-                        getNeighbor(level, blockPosSideCounterClockwise) << 2 |
-                        getNeighbor(level, blockPosBehind) << 3;
+                getNeighbor(level, blockPosInfront) << 1 |
+                getNeighbor(level, blockPosSideCounterClockwise) << 2 |
+                getNeighbor(level, blockPosBehind) << 3;
         return neighbor;
     }
 
