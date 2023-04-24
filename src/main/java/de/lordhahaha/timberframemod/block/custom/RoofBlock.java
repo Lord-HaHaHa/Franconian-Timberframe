@@ -301,7 +301,7 @@ public class RoofBlock extends Block{
                     if(neighbor == 8)
                         blockState = blockState.setValue(FACING, blockState.getValue(FACING).getOpposite()); // Rotate so the Block is facing in the right Direction
 
-                    if(!blockState.equals(backupBlockState)) {
+                    if(!blockState.equals(backupBlockState) || blockState.getValue(STATE) != STATE_TOP_EDGE) {
                         update = true;
                         blockState = blockState.setValue(STATE, STATE_TOP_EDGE);
                     }
@@ -319,19 +319,53 @@ public class RoofBlock extends Block{
                 if(neighbor == 7 || neighbor == 11 || neighbor == 13 || neighbor == 14){ // Check if it has 3 neighbors
                     // Set block to 3Way-Top Block
                     if(blockState.getValue(STATE) != STATE_TOP_T){
-                        //TODO Correct the rotation depending on neighbors
+                        //TODO Correct the rotation depending on
 
+                        // Reset earlier Rotations
+                        if(blockState.getValue(FACING) != blockState.getValue(FACING_ORG)) {
+                            blockState = blockState.setValue(FACING, blockState.getValue(FACING_ORG));
+                        }
+                        neighbor = getNeighbor(level, blockState, blockPos);
+
+                        // Rotate Block depending on its neighbors
+                        System.out.println(neighbor);
+                        switch (neighbor) {
+                            case (7): {
+                                blockState = blockState.setValue(FACING, blockState.getValue(FACING).getCounterClockWise());
+                                break;
+                            }
+                            case (14): {
+                                blockState = blockState.setValue(FACING, blockState.getValue(FACING).getCounterClockWise().getCounterClockWise());
+                                break;
+                            }
+                            case (13): {
+                                blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
+                                break;
+                            }
+                        }
                         update = true;
                         blockState = blockState.setValue(STATE, STATE_TOP_T);
                     }
                 } else {
                     // Check if Block is a 2 Way-Top Block
                     if(neighbor == 3 || neighbor == 6 || neighbor == 12 || neighbor == 9){ // Check if Block has 2 neighbors
-                        // Set block to 2Way-Top Block
                         {
                             if(blockState.getValue(STATE) != STATE_TOP_L){
-                                //TODO Correct the rotation depending on neighbors
-
+                                // Rotate the Block depending on its neighbors
+                                switch (neighbor) {
+                                    case(6): {
+                                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getCounterClockWise());
+                                        break;
+                                    }
+                                    case (12):{
+                                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getCounterClockWise().getCounterClockWise());
+                                        break;
+                                    }
+                                    case (9): {
+                                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
+                                        break;
+                                    }
+                                }
                                 update = true;
                                 blockState = blockState.setValue(STATE, STATE_TOP_L);
                             }

@@ -30,19 +30,19 @@
         "facing=west,state=5":  { "model": "timberframemod:block/block_roof_top_end", "y": 270 },
         "facing=east,state=5":  { "model": "timberframemod:block/block_roof_top_end", "y": 90 },
 
-        "facing=east,state=6": { "model": "timberframemod:block/block_roof_top_cross" },
-        "facing=west,state=6": { "model": "timberframemod:block/block_roof_top_cross", "y": 180 },
-        "facing=north,state=6":  { "model": "timberframemod:block/block_roof_top_cross", "y": 270 },
-        "facing=south,state=6":  { "model": "timberframemod:block/block_roof_top_cross", "y": 90 },
+        "facing=north,state=6": { "model": "timberframemod:block/block_roof_top_cross" },
+        "facing=south,state=6": { "model": "timberframemod:block/block_roof_top_cross", "y": 180 },
+        "facing=west,state=6":  { "model": "timberframemod:block/block_roof_top_cross", "y": 270 },
+        "facing=east,state=6":  { "model": "timberframemod:block/block_roof_top_cross", "y": 90 },
 
-        "facing=east,state=7": { "model": "timberframemod:block/block_roof_top_3way" },
-        "facing=west,state=7": { "model": "timberframemod:block/block_roof_top_3way", "y": 180 },
-        "facing=south,state=7":  { "model": "timberframemod:block/block_roof_top_3way", "y": 90 },
-        "facing=north,state=7":  { "model": "timberframemod:block/block_roof_top_3way", "y": 270 },
+        "facing=north,state=7": { "model": "timberframemod:block/block_roof_top_3way", "y": 180  },
+        "facing=south,state=7": { "model": "timberframemod:block/block_roof_top_3way" },
+        "facing=west,state=7":  { "model": "timberframemod:block/block_roof_top_3way", "y": 90 },
+        "facing=east,state=7":  { "model": "timberframemod:block/block_roof_top_3way", "y": 270 },
 
-        "facing=east,state=8": { "model": "timberframemod:block/block_roof_top_2way" },
-        "facing=west,state=8": { "model": "timberframemod:block/block_roof_top_2way", "y": 180 },
-        "facing=south,state=8":  { "model": "timberframemod:block/block_roof_top_2way", "y": 90 },
-        "facing=north,state=8":  { "model": "timberframemod:block/block_roof_top_2way", "y": 270 }
+        "facing=north,state=8": { "model": "timberframemod:block/block_roof_top_2way" },
+        "facing=south,state=8": { "model": "timberframemod:block/block_roof_top_2way", "y": 180 },
+        "facing=west,state=8":  { "model": "timberframemod:block/block_roof_top_2way", "y": 90 },
+        "facing=east,state=8":  { "model": "timberframemod:block/block_roof_top_2way", "y": 270 }
     }
 }
