@@ -78,25 +78,28 @@ public class ModBlocks {
     public static final RegistryObject<Block> BLOCK_ROOF_TRUSS_STAND_SOLO = registerBlock("block_roof_truss_stand_solo", () -> new RoofTrussBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     public static final RegistryObject<Block> BLOCK_ROOF_TRUSS_STAND_EDGE = registerBlock("block_roof_truss_stand_edge", () -> new RoofTrussBlock(TimberframeMaterial) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
 
-    public static final RegistryObject<Block> BLOCK_WINDOW_1x1 = registerBlock("block_window_1x1", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW = registerBlock("block_window", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
 
-    public static final RegistryObject<Block> BLOCK_WINDOW_1xN_TOP = registerBlock("block_window_1xn_top", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_1xN_MIDDLE = registerBlock("block_window_1xn_middle", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_1xN_BOTTOM = registerBlock("block_window_1xn_bottom", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    //TODO: the following blocks are only for testing. remove the redundant blocks
+    public static final RegistryObject<Block> BLOCK_WINDOW_1x1 = registerBlock("block_window_1x1", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
 
-    public static final RegistryObject<Block> BLOCK_WINDOW_Nx1_LEFT = registerBlock("block_window_nx1_left", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_Nx1_MIDDLE = registerBlock("block_window_nx1_middle", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_Nx1_RIGHT = registerBlock("block_window_nx1_right", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_1xN_TOP = registerBlock("block_window_1xn_top", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_1xN_MIDDLE = registerBlock("block_window_1xn_middle", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_1xN_BOTTOM = registerBlock("block_window_1xn_bottom", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
 
-    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_LEFT_TOP = registerBlock("block_window_nxn_lt", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_LEFT_MIDDLE = registerBlock("block_window_nxn_lm", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_LEFT_BOTTOM = registerBlock("block_window_nxn_lb", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_MIDDLE_TOP = registerBlock("block_window_nxn_mt", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_MIDDLE_MIDDLE = registerBlock("block_window_nxn_mm", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_MIDDLE_BOTTOM = registerBlock("block_window_nxn_mb", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_RIGHT_TOP = registerBlock("block_window_nxn_rt", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_RIGHT_MIDDLE = registerBlock("block_window_nxn_rm", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
-    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_RIGHT_BOTTOM = registerBlock("block_window_nxn_rb", () -> new RotationalBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_Nx1_LEFT = registerBlock("block_window_nx1_left", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_Nx1_MIDDLE = registerBlock("block_window_nx1_middle", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_Nx1_RIGHT = registerBlock("block_window_nx1_right", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+
+    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_LEFT_TOP = registerBlock("block_window_nxn_lt", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_LEFT_MIDDLE = registerBlock("block_window_nxn_lm", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_LEFT_BOTTOM = registerBlock("block_window_nxn_lb", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_MIDDLE_TOP = registerBlock("block_window_nxn_mt", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_MIDDLE_MIDDLE = registerBlock("block_window_nxn_mm", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_MIDDLE_BOTTOM = registerBlock("block_window_nxn_mb", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_RIGHT_TOP = registerBlock("block_window_nxn_rt", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_RIGHT_MIDDLE = registerBlock("block_window_nxn_rm", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
+    public static final RegistryObject<Block> BLOCK_WINDOW_NxN_RIGHT_BOTTOM = registerBlock("block_window_nxn_rb", () -> new WindowBlock(BlockBehaviour.Properties.copy(Blocks.GLASS_PANE)) {}, ModCreativeModeTab.TIMBERFRAME_TAB);
     // --- Helper-functions ---
     // Register a new Block with Blockitem
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, CreativeModeTab tab){

@@ -1,0 +1,83 @@
+{
+    "variants": {
+        "facing=south,state=0": { "model": "timberframemod:block/block_window_1x1" },
+        "facing=north,state=0": { "model": "timberframemod:block/block_window_1x1", "y": 180 },
+        "facing=east,state=0":  { "model": "timberframemod:block/block_window_1x1", "y": 270 },
+        "facing=west,state=0":  { "model": "timberframemod:block/block_window_1x1", "y": 90 },
+
+        "facing=south,state=1": { "model": "timberframemod:block/block_window_1xn_bottom" },
+        "facing=north,state=1": { "model": "timberframemod:block/block_window_1xn_bottom", "y": 180 },
+        "facing=east,state=1":  { "model": "timberframemod:block/block_window_1xn_bottom", "y": 270 },
+        "facing=west,state=1":  { "model": "timberframemod:block/block_window_1xn_bottom", "y": 90 },
+
+        "facing=south,state=2": { "model": "timberframemod:block/block_window_nx1_left" },
+        "facing=north,state=2": { "model": "timberframemod:block/block_window_nx1_left", "y": 180 },
+        "facing=east,state=2":  { "model": "timberframemod:block/block_window_nx1_left", "y": 270 },
+        "facing=west,state=2":  { "model": "timberframemod:block/block_window_nx1_left", "y": 90 },
+
+        "facing=south,state=3": { "model": "timberframemod:block/block_window_nxn_lb" },
+        "facing=north,state=3": { "model": "timberframemod:block/block_window_nxn_lb", "y": 180 },
+        "facing=east,state=3":  { "model": "timberframemod:block/block_window_nxn_lb", "y": 270 },
+        "facing=west,state=3":  { "model": "timberframemod:block/block_window_nxn_lb", "y": 90 },
+
+        "facing=south,state=4": { "model": "timberframemod:block/block_window_1xn_top" },
+        "facing=north,state=4": { "model": "timberframemod:block/block_window_1xn_top", "y": 180 },
+        "facing=east,state=4":  { "model": "timberframemod:block/block_window_1xn_top", "y": 270 },
+        "facing=west,state=4":  { "model": "timberframemod:block/block_window_1xn_top", "y": 90 },
+
+        "facing=south,state=5": { "model": "timberframemod:block/block_window_1xn_middle" },
+        "facing=north,state=5": { "model": "timberframemod:block/block_window_1xn_middle", "y": 180 },
+        "facing=east,state=5":  { "model": "timberframemod:block/block_window_1xn_middle", "y": 270 },
+        "facing=west,state=5":  { "model": "timberframemod:block/block_window_1xn_middle", "y": 90 },
+
+        "facing=south,state=6": { "model": "timberframemod:block/block_window_nxn_lt" },
+        "facing=north,state=6": { "model": "timberframemod:block/block_window_nxn_lt", "y": 180 },
+        "facing=east,state=6":  { "model": "timberframemod:block/block_window_nxn_lt", "y": 270 },
+        "facing=west,state=6":  { "model": "timberframemod:block/block_window_nxn_lt", "y": 90 },
+
+        "facing=south,state=7": { "model": "timberframemod:block/block_window_nxn_lm" },
+        "facing=north,state=7": { "model": "timberframemod:block/block_window_nxn_lm", "y": 180 },
+        "facing=east,state=7":  { "model": "timberframemod:block/block_window_nxn_lm", "y": 270 },
+        "facing=west,state=7":  { "model": "timberframemod:block/block_window_nxn_lm", "y": 90 },
+
+        "facing=south,state=8": { "model": "timberframemod:block/block_window_nx1_right" },
+        "facing=north,state=8": { "model": "timberframemod:block/block_window_nx1_right", "y": 180 },
+        "facing=east,state=8":  { "model": "timberframemod:block/block_window_nx1_right", "y": 270 },
+        "facing=west,state=8":  { "model": "timberframemod:block/block_window_nx1_right", "y": 90 },
+
+        "facing=south,state=9": { "model": "timberframemod:block/block_window_nxn_rb" },
+        "facing=north,state=9": { "model": "timberframemod:block/block_window_nxn_rb", "y": 180 },
+        "facing=east,state=9":  { "model": "timberframemod:block/block_window_nxn_rb", "y": 270 },
+        "facing=west,state=9":  { "model": "timberframemod:block/block_window_nxn_rb", "y": 90 },
+
+        "facing=south,state=10": { "model": "timberframemod:block/block_window_nx1_middle" },
+        "facing=north,state=10": { "model": "timberframemod:block/block_window_nx1_middle", "y": 180 },
+        "facing=east,state=10":  { "model": "timberframemod:block/block_window_nx1_middle", "y": 270 },
+        "facing=west,state=10":  { "model": "timberframemod:block/block_window_nx1_middle", "y": 90 },
+
+        "facing=south,state=11": { "model": "timberframemod:block/block_window_nxn_mb" },
+        "facing=north,state=11": { "model": "timberframemod:block/block_window_nxn_mb", "y": 180 },
+        "facing=east,state=11":  { "model": "timberframemod:block/block_window_nxn_mb", "y": 270 },
+        "facing=west,state=11":  { "model": "timberframemod:block/block_window_nxn_mb", "y": 90 },
+
+        "facing=south,state=12": { "model": "timberframemod:block/block_window_nxn_rt" },
+        "facing=north,state=12": { "model": "timberframemod:block/block_window_nxn_rt", "y": 180 },
+        "facing=east,state=12":  { "model": "timberframemod:block/block_window_nxn_rt", "y": 270 },
+        "facing=west,state=12":  { "model": "timberframemod:block/block_window_nxn_rt", "y": 90 },
+
+        "facing=south,state=13": { "model": "timberframemod:block/block_window_nxn_rm" },
+        "facing=north,state=13": { "model": "timberframemod:block/block_window_nxn_rm", "y": 180 },
+        "facing=east,state=13":  { "model": "timberframemod:block/block_window_nxn_rm", "y": 270 },
+        "facing=west,state=13":  { "model": "timberframemod:block/block_window_nxn_rm", "y": 90 },
+
+        "facing=south,state=14": { "model": "timberframemod:block/block_window_nxn_mt" },
+        "facing=north,state=14": { "model": "timberframemod:block/block_window_nxn_mt", "y": 180 },
+        "facing=east,state=14":  { "model": "timberframemod:block/block_window_nxn_mt", "y": 270 },
+        "facing=west,state=14":  { "model": "timberframemod:block/block_window_nxn_mt", "y": 90 },
+
+        "facing=south,state=15": { "model": "timberframemod:block/block_window_nxn_mm" },
+        "facing=north,state=15": { "model": "timberframemod:block/block_window_nxn_mm", "y": 180 },
+        "facing=east,state=15":  { "model": "timberframemod:block/block_window_nxn_mm", "y": 270 },
+        "facing=west,state=15":  { "model": "timberframemod:block/block_window_nxn_mm", "y": 90 }
+    }
+}
