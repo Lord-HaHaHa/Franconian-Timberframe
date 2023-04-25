@@ -1,8 +1,0 @@
-{
-    "variants": {
-        "facing=south": { "model": "timberframemod:block/block_window_nxn_mm" },
-        "facing=north": { "model": "timberframemod:block/block_window_nxn_mm", "y": 180 },
-        "facing=east":  { "model": "timberframemod:block/block_window_nxn_mm", "y": 270 },
-        "facing=west":  { "model": "timberframemod:block/block_window_nxn_mm", "y": 90 }
-    }
-}
