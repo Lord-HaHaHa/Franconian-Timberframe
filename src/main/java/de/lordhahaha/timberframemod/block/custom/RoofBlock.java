@@ -112,16 +112,16 @@ public class RoofBlock extends Block{
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Level level = context.getLevel();
         BlockPos blockPos = context.getClickedPos();
-        //BlockState blockStateBehind = context.getLevel().getBlockState(context.getClickedPos().relative(context.getHorizontalDirection()));
 
         BlockState blockState = this.defaultBlockState()
                 .setValue(FACING, context.getHorizontalDirection())
                 .setValue(FACING_ORG, context.getHorizontalDirection())
                 .setValue(STATE, this.defaultBlockState().getValue(STATE));
 
-        blockState = checkForGable(blockState, level, blockPos, false);
-        blockState = checkForTop(blockState, level, blockPos, false);
-        blockState = checkForCorner(blockState, level, blockPos, false);
+        // Get blockState depending on its Neighbors
+        blockState = checkForGable(blockState, level, blockPos);
+        blockState = checkForTop(blockState, level, blockPos);
+        blockState = checkForCorner(blockState, level, blockPos);
         return blockState;
     }
 
@@ -129,28 +129,32 @@ public class RoofBlock extends Block{
     @Override
     public void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, BlockPos blockPosNeighbor, boolean bool) {
         super.neighborChanged(blockState, level, blockPos, block, blockPosNeighbor, bool);
-
+        BlockState blockStateBackup = blockState;
         System.out.println("Neighbor Changed");
         System.out.println(MessageFormat.format("OWNPOS: {0} Neighbor: {1}", blockPos, blockPosNeighbor));
 
         if(block.equals(Blocks.AIR) || block.equals(ROOF_BLOCK)){
             if((blockState.getValue(STATE) < STATE_TOP && level.getBlockState(blockPosNeighbor.below()).getBlock().equals(Blocks.AIR)) ||
                 blockState.getValue(STATE) == STATE_CORNER_INNER || blockState.getValue(STATE) == STATE_CORNER_OUTER){
-                System.out.println(MessageFormat.format("Check Gable with: {0}", blockPos));
-                checkForGable(blockState, level, blockPos, true);
+
+                blockState = checkForGable(blockState, level, blockPos);
             }
-            checkForTop(blockState, level, blockPos, true);
+            blockState = checkForTop(blockState, level, blockPos);
         }
 
         if(block.equals(Blocks.AIR)) { // Only check if a new block is placed
             System.out.println("Check for Corner");
-            checkForCorner(blockState, level, blockPos, true);
+            blockState = checkForCorner(blockState, level, blockPos);
+        }
+
+        // Update block in World
+        if(!blockState.equals(blockStateBackup)){
+            level.setBlockAndUpdate(blockPos, blockState);
         }
     }
-    //TODO: remove corner when in line
-    public BlockState checkForCorner(BlockState blockState, Level level, BlockPos blockPos, boolean place){
-        boolean update = false;
 
+    //TODO: remove corner when in line
+    public BlockState checkForCorner(BlockState blockState, Level level, BlockPos blockPos){
         ROOF_BLOCK = ModBlocks.BLOCK_ROOF_MAIN.get();
 
         BlockPos blockPosBehind = blockPos.relative(blockState.getValue(FACING));
@@ -184,14 +188,8 @@ public class RoofBlock extends Block{
 
                         blockState = blockState.setValue(STATE, STATE_CORNER_INNER);
                     }
-                    update = true;
                 }
             }
-        }
-
-        if(update && place){
-            System.out.println("Set Corner");
-            level.setBlockAndUpdate(blockPos, blockState);
         }
         return blockState;
     }
@@ -200,12 +198,10 @@ public class RoofBlock extends Block{
      * @param blockState State of the Roof Block
      * @param level
      * @param blockPos Position of the Block
-     * @param place true if the Method place the Block
      * @return adjusted BlockState for the RoofBlock
      */
-    public BlockState checkForGable(BlockState blockState, Level level, BlockPos blockPos, boolean place){
+    public BlockState checkForGable(BlockState blockState, Level level, BlockPos blockPos){
         // Checks if a given Block is a Gable
-        boolean update = false;
 
         BlockState blockStateClockwise = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getClockWise()));
         BlockState blockStateCounterClockwise = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getCounterClockWise()));
@@ -239,29 +235,22 @@ public class RoofBlock extends Block{
         )
         {
             if(blockState.getValue(STATE) != STATE_ROOF){
-                    update = true;
                     blockState = blockState.setValue(STATE, STATE_ROOF);
             }
         } else{
                 if(blockState.getValue(STATE) != STATE_GABLE){
-                    update = true;
                     blockState = blockState.setValue(STATE, STATE_GABLE);
                 }
         }
 
-        if(update && place){
-            // Reset earlier Rotations
-            if(blockState.getValue(FACING) != blockState.getValue(FACING_ORG))
-                blockState = blockState.setValue(FACING, blockState.getValue(FACING_ORG));
+        // Reset earlier Rotations
+        if(blockState.getValue(FACING) != blockState.getValue(FACING_ORG))
+            blockState = blockState.setValue(FACING, blockState.getValue(FACING_ORG));
 
-            level.setBlockAndUpdate(blockPos, blockState);
-        }
         return blockState;
     }
 
-    public BlockState checkForTop(BlockState blockState, Level level, BlockPos blockPos, boolean place){
-        boolean update = false;
-
+    public BlockState checkForTop(BlockState blockState, Level level, BlockPos blockPos){
         BlockPos blockPosBelow = blockPos.below();
         BlockPos blockPosBelowInfrontPos = blockPosBelow.relative(blockState.getValue(FACING));
         BlockPos blockPosBelowBehindPos = blockPosBelow.relative(blockState.getValue(FACING).getOpposite());
@@ -288,7 +277,6 @@ public class RoofBlock extends Block{
                     if(neighbor == 5) {
                         blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
                     }
-                    update = true;
                     blockState = blockState.setValue(STATE, STATE_TOP);
                 }
             } else {
@@ -309,7 +297,6 @@ public class RoofBlock extends Block{
                         blockState = blockState.setValue(FACING, blockState.getValue(FACING).getOpposite()); // Rotate so the Block is facing in the right Direction
 
                     if(!blockState.equals(backupBlockState) || blockState.getValue(STATE) != STATE_TOP_EDGE) {
-                        update = true;
                         blockState = blockState.setValue(STATE, STATE_TOP_EDGE);
                     }
                 }
@@ -318,7 +305,6 @@ public class RoofBlock extends Block{
             // Check if Block is a Top-Center Block (all side are roofs)
             if(neighbor == 15){
                 if(blockState.getValue(STATE) != STATE_TOP_CROSS){
-                    update = true;
                     blockState = blockState.setValue(STATE, STATE_TOP_CROSS);
                 }
             } else {
@@ -349,7 +335,6 @@ public class RoofBlock extends Block{
                                 break;
                             }
                         }
-                        update = true;
                         blockState = blockState.setValue(STATE, STATE_TOP_T);
                     }
                 } else {
@@ -372,18 +357,12 @@ public class RoofBlock extends Block{
                                         break;
                                     }
                                 }
-                                update = true;
                                 blockState = blockState.setValue(STATE, STATE_TOP_L);
                             }
                         }
                     }
                 }
             }
-        }
-
-        // Update Block in world
-        if(update && place){
-            level.setBlockAndUpdate(blockPos, blockState);
         }
         return blockState;
     }
