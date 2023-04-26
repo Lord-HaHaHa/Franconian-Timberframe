@@ -33,6 +33,7 @@ public class RoofBlock extends Block{
     static final int STATE_TOP_CROSS = 6;
     static final int STATE_TOP_T = 7;
     static final int STATE_TOP_L = 8;
+    static final int STATE_TOP_CENTER = 9;
 
     private static final VoxelShape TOP_SHAPE = Block.box(0,0,0,16,5,16);
     private static final VoxelShape BASE_SHAPE = Block.box(0,0,0,16,8,16);
@@ -55,7 +56,7 @@ public class RoofBlock extends Block{
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final DirectionProperty FACING_ORG = DirectionProperty.create("facing_org", Direction.Plane.HORIZONTAL);
-    public static final IntegerProperty STATE = IntegerProperty.create("state", 0, 8);
+    public static final IntegerProperty STATE = IntegerProperty.create("state", 0, 9);
     public Block ROOF_BLOCK;
     public RoofBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -264,6 +265,9 @@ public class RoofBlock extends Block{
 
         int neighbor = getNeighbor(level, blockState, blockPos);
 
+        System.out.print("checkForTop neighbor=");
+        System.out.println(neighbor);
+
         // Test if a Block is a Top-Block
         if((blockBelowInfront.equals(ROOF_BLOCK) && blockBelowBehind.equals(ROOF_BLOCK) ||
                 blockBelowClockwise.equals(ROOF_BLOCK) && blockBelowCounterClockwise.equals(ROOF_BLOCK)))
@@ -282,22 +286,28 @@ public class RoofBlock extends Block{
             } else {
                 if(neighbor == 0 || neighbor == 1 || neighbor == 2 || neighbor == 4 || neighbor == 8) // Check if it has none / only 1 Neighbor
                 {
-                    BlockState backupBlockState = blockState;
-                    // Rotate Block 90deg if placed vertical on rooftop
-                    if(blockBelowInfront.equals(ROOF_BLOCK) && blockBelowBehind.equals(ROOF_BLOCK))
-                    {
-                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
-                    }
+                    //check for center
+                    if (neighbor==0 ){
+                            if(blockState.getValue(STATE) != STATE_TOP_CENTER){
+                                blockState = blockState.setValue(STATE, STATE_TOP_CENTER);
+                            }
+                    } else {
+                        BlockState backupBlockState = blockState;
+                        // Rotate Block 90deg if placed vertical on rooftop
+                        if (blockBelowInfront.equals(ROOF_BLOCK) && blockBelowBehind.equals(ROOF_BLOCK)) {
+                            blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
+                        }
 
-                    //Update neighbor after Rotation for inline Placement to determan if edge needs to be fliped
-                    neighbor = getNeighbor(level, blockState, blockPos);
+                        //Update neighbor after Rotation for inline Placement to determan if edge needs to be fliped
+                        neighbor = getNeighbor(level, blockState, blockPos);
 
-                    // Rotate 180deg if Edge block is facing to a anthoer EdgeBlock
-                    if(neighbor == 8)
-                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getOpposite()); // Rotate so the Block is facing in the right Direction
+                        // Rotate 180deg if Edge block is facing to a anthoer EdgeBlock
+                        if (neighbor == 8)
+                            blockState = blockState.setValue(FACING, blockState.getValue(FACING).getOpposite()); // Rotate so the Block is facing in the right Direction
 
-                    if(!blockState.equals(backupBlockState) || blockState.getValue(STATE) != STATE_TOP_EDGE) {
-                        blockState = blockState.setValue(STATE, STATE_TOP_EDGE);
+                        if (!blockState.equals(backupBlockState) || blockState.getValue(STATE) != STATE_TOP_EDGE) {
+                            blockState = blockState.setValue(STATE, STATE_TOP_EDGE);
+                        }
                     }
                 }
             }
