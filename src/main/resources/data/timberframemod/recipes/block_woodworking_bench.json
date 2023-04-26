@@ -1,13 +1,18 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "key": {
-    "x": {
-      "item": "timberframemod:wattle_daub"
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:crafting_table"
+    },
+    {
+      "item": "timberframemod:carpenters_saw"
+    },
+    {
+      "item": "timberframemod:carpenters_hammer"
+    },
+    {
+      "item": "timberframemod:carpenters_plane"
     }
-  },
-  "pattern": [
-    "xx",
-    "xx"
   ],
   "result": {
     "count": 1,
