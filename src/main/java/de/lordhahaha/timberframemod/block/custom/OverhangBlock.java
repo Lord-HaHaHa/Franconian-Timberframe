@@ -36,7 +36,7 @@ public class OverhangBlock extends Block {
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         int i = 0;
-        if(blockState.getValue(STATE) == 4)
+        if(blockState.getValue(STATE) >= 4)
             i = 0;
         else
             i = blockState.getValue(STATE) + 1;

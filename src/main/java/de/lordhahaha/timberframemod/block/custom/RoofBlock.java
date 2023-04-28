@@ -2,8 +2,13 @@ package de.lordhahaha.timberframemod.block.custom;
 
 import de.lordhahaha.timberframemod.Timberframemod;
 import de.lordhahaha.timberframemod.block.ModBlocks;
+import de.lordhahaha.timberframemod.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -13,8 +18,10 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -57,9 +64,11 @@ public class RoofBlock extends Block{
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final DirectionProperty FACING_ORG = DirectionProperty.create("facing_org", Direction.Plane.HORIZONTAL);
     public static final IntegerProperty STATE = IntegerProperty.create("state", 0, 9);
+    public  static final BooleanProperty MANUAL = BooleanProperty.create("manual");
     public Block ROOF_BLOCK;
     public RoofBlock(BlockBehaviour.Properties properties) {
         super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(MANUAL,false));
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING_ORG, Direction.NORTH));
         this.registerDefaultState(this.stateDefinition.any().setValue(STATE, STATE_GABLE));
@@ -108,6 +117,44 @@ public class RoofBlock extends Block{
         //return super.getShape(blockState, blockGetter, blockPos, collisionContext);
     }
 
+    @Override
+    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        ItemStack held = player.getItemInHand(interactionHand);
+
+        if (!level.isClientSide()) {
+            //run on server only
+
+            if (held.getItem() == ModItems.CARPENTERS_HAMMER.get()) {
+                Direction facing = blockState.getValue(FACING);
+                //first rotate. if block is NORTH, we change state
+                if (facing.equals(Direction.NORTH)){
+                    int state = blockState.getValue(STATE);
+                    blockState = blockState.setValue(MANUAL, true);
+                    if (state < STATE_TOP) {
+                        state++;
+                        if (state >= STATE_TOP) {
+                            state = STATE_ROOF;
+                        }
+                    }
+                    if (state >= STATE_TOP) {
+                        state++;
+                        if (state >= STATE_TOP_CENTER) {
+                            state = STATE_TOP;
+                        }
+                    }
+                    blockState = blockState.setValue(STATE, state);
+                    blockState = blockState.setValue(FACING, Direction.NORTH.getClockWise());
+                } else {
+                    blockState = blockState.setValue(FACING, facing.getClockWise());
+                }
+
+                //System.out.println(state);
+                level.setBlockAndUpdate(blockPos, blockState);
+            }
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -117,7 +164,8 @@ public class RoofBlock extends Block{
         BlockState blockState = this.defaultBlockState()
                 .setValue(FACING, context.getHorizontalDirection())
                 .setValue(FACING_ORG, context.getHorizontalDirection())
-                .setValue(STATE, this.defaultBlockState().getValue(STATE));
+                .setValue(STATE, this.defaultBlockState().getValue(STATE))
+                .setValue(MANUAL, false);
 
         // Get blockState depending on its Neighbors
         blockState = checkForGable(blockState, level, blockPos);
@@ -134,18 +182,20 @@ public class RoofBlock extends Block{
         System.out.println("Neighbor Changed");
         System.out.println(MessageFormat.format("OWNPOS: {0} Neighbor: {1}", blockPos, blockPosNeighbor));
 
-        if(block.equals(Blocks.AIR) || block.equals(ROOF_BLOCK)){
-            if((blockState.getValue(STATE) < STATE_TOP && level.getBlockState(blockPosNeighbor.below()).getBlock().equals(Blocks.AIR)) ||
-                blockState.getValue(STATE) == STATE_CORNER_INNER || blockState.getValue(STATE) == STATE_CORNER_OUTER){
+        if(!(blockState.getValue(MANUAL))){
+            if(block.equals(Blocks.AIR) || block.equals(ROOF_BLOCK)){
+                if((blockState.getValue(STATE) < STATE_TOP && level.getBlockState(blockPosNeighbor.below()).getBlock().equals(Blocks.AIR)) ||
+                        blockState.getValue(STATE) == STATE_CORNER_INNER || blockState.getValue(STATE) == STATE_CORNER_OUTER){
 
-                blockState = checkForGable(blockState, level, blockPos);
+                    blockState = checkForGable(blockState, level, blockPos);
+                }
+                blockState = checkForTop(blockState, level, blockPos);
             }
-            blockState = checkForTop(blockState, level, blockPos);
-        }
 
-        if(block.equals(Blocks.AIR)) { // Only check if a new block is placed
-            System.out.println("Check for Corner");
-            blockState = checkForCorner(blockState, level, blockPos);
+            if(block.equals(Blocks.AIR)) { // Only check if a new block is placed
+                System.out.println("Check for Corner");
+                blockState = checkForCorner(blockState, level, blockPos);
+            }
         }
 
         // Update block in World
@@ -411,5 +461,6 @@ public class RoofBlock extends Block{
         builder.add(FACING);
         builder.add(FACING_ORG);
         builder.add(STATE);
+        builder.add(MANUAL);
     }
 }
