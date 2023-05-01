@@ -1,0 +1,19 @@
+{
+  "type": "timberframemod:wood_working",
+  "slot1": {
+    "count": 1,
+    "ingredients": [{
+        "item": "minecraft:glass_pane"
+      }
+    ]
+  },
+  "slot2": {
+    "count": 4,
+    "ingredients": [{
+      "tag": "minecraft:planks"
+    }
+    ]
+  },
+  "result": "timberframemod:block_window",
+  "count": 1
+}
