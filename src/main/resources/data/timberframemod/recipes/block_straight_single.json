@@ -1,0 +1,19 @@
+{
+  "type": "timberframemod:wood_working",
+  "slot1": {
+    "count": 1,
+    "ingredients": [{
+        "item": "timberframemod:wattle_daub"
+      }
+    ]
+  },
+  "slot2": {
+    "count": 4,
+    "ingredients": [{
+      "item": "minecraft:stick"
+    }
+    ]
+  },
+  "result": "timberframemod:block_straight_single",
+  "count": 1
+}
