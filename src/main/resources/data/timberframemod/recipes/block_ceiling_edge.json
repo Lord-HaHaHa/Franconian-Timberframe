@@ -10,7 +10,7 @@
   "slot2": {
     "count": 1,
     "ingredients": [{
-      "tag": "minecraft:stripped_logs"
+      "tag": "minecraft:logs"
     }
     ]
   },

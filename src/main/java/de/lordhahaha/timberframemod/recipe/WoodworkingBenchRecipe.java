@@ -67,27 +67,20 @@ public class WoodworkingBenchRecipe extends SingleItemRecipe {
         @Override
         public WoodworkingBenchRecipe fromJson(ResourceLocation id, JsonObject recipe) {
 
-            int amounts[] = {0,0};
-            ArrayList<Ingredient> ingredients = new ArrayList<>();
-
             JsonObject ingredientOBJ1 = GsonHelper.getAsJsonObject(recipe, "slot1");
             JsonArray ingredients1 = GsonHelper.getAsJsonArray(ingredientOBJ1, "ingredients");
             int count1 = GsonHelper.getAsInt(ingredientOBJ1, "count");
             Ingredient ingredient1 = Ingredient.fromJson(ingredients1);
-            ingredients.add(ingredient1);
-            amounts[0] = count1;
 
             JsonObject ingredientOBJ2 = GsonHelper.getAsJsonObject(recipe, "slot2");
             JsonArray ingredients2 = GsonHelper.getAsJsonArray(ingredientOBJ2, "ingredients");
             int count2 = GsonHelper.getAsInt(ingredientOBJ2, "count");
             Ingredient ingredient2 = Ingredient.fromJson(ingredients2);
-            ingredients.add(ingredient2);
-            amounts[1] = count2;
 
             String s1 = GsonHelper.getAsString(recipe, "result");
             int resultCount = GsonHelper.getAsInt(recipe, "count");
             ItemStack itemStack = new ItemStack(Registry.ITEM.get(new ResourceLocation(s1)) , resultCount);
-            return new WoodworkingBenchRecipe(id, "wood_working", ingredients.get(0), ingredients.get(1), itemStack, amounts[0], amounts[1]);
+            return new WoodworkingBenchRecipe(id, "wood_working", ingredient1, ingredient2, itemStack, count1, count2);
         }
 
         @Override

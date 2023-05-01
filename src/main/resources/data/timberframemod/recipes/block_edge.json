@@ -10,15 +10,9 @@
   "slot2": {
     "count": 4,
     "ingredients": [
-      { "item": "stripped_oak_log"},
-      { "item": "stripped_spruce_log"},
-      { "item": "stripped_birch_log"},
-      { "item": "stripped_jungle_log"},
-      { "item": "stripped_acacia_log"},
-      { "item": "stripped_dark_oak_log"},
-      { "item": "stripped_crimson_stem"},
-      { "item": "stripped_warped_stem"},
-      { "item": "stripped_mangrove_log"}
+      {
+        "tag": "minecraft:logs"
+      }
     ]
   },
   "result": "timberframemod:block_edge",
