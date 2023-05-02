@@ -204,7 +204,6 @@ public class RoofBlock extends Block{
         }
     }
 
-    //TODO: remove corner when in line
     public BlockState checkForCorner(BlockState blockState, Level level, BlockPos blockPos){
         ROOF_BLOCK = ModBlocks.BLOCK_ROOF_MAIN.get();
 
@@ -259,10 +258,10 @@ public class RoofBlock extends Block{
         BlockState blockStateBehind = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getOpposite()));
         BlockState blockStateInfront = level.getBlockState(blockPos.relative(blockState.getValue(FACING)));
 
-        //do not change if Corner it is not in line with other Roof-Blocks
-        if((blockStateClockwise.getBlock() != blockStateCounterClockwise.getBlock() && blockStateInfront.getBlock() != blockStateBehind.getBlock())) {
+        //do not change if Block it is not in line with other Roof-Blocks
+        if(!blockStateClockwise.getBlock().equals(blockStateCounterClockwise.getBlock()) &&
+                !blockStateInfront.getBlock().equals(blockStateBehind.getBlock()))
             return blockState;
-        }
 
         Block blockBelow = level.getBlockState(blockPos.below()).getBlock();
 
@@ -285,13 +284,13 @@ public class RoofBlock extends Block{
             blockBelow.equals(ModBlocks.BLOCK_ROOF_TRUSS_STAND_EDGE.get())
         )
         {
-            if(blockState.getValue(STATE) != STATE_ROOF){
+            if(blockState.getValue(STATE) != STATE_ROOF) {
                     blockState = blockState.setValue(STATE, STATE_ROOF);
             }
-        } else{
-                if(blockState.getValue(STATE) != STATE_GABLE){
-                    blockState = blockState.setValue(STATE, STATE_GABLE);
-                }
+        } else {
+            if(blockState.getValue(STATE) != STATE_GABLE) {
+                blockState = blockState.setValue(STATE, STATE_GABLE);
+            }
         }
 
         // Reset earlier Rotations
