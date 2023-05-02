@@ -11,9 +11,11 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 
 public class WoodworkingBenchRecipeCategory implements IRecipeCategory<WoodworkingBenchRecipe> {
 
@@ -49,13 +51,16 @@ public class WoodworkingBenchRecipeCategory implements IRecipeCategory<Woodworki
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, WoodworkingBenchRecipe recipe, IFocusGroup focuses) {
-        ItemStack items1 = new ItemStack(recipe.getIngredients().get(0).getItems()[0].getItem());
-        ItemStack items2 = new ItemStack(recipe.getIngredients().get(1).getItems()[0].getItem());
+        NonNullList<Ingredient> ingredients=recipe.getIngredients();
+        ItemStack items1 = new ItemStack(ingredients.get(0).getItems()[0].getItem());
         int[] amount=recipe.getIngredientsAmount();
         items1.setCount(amount[0]);
-        items2.setCount(amount[1]);
         builder.addSlot(RecipeIngredientRole.INPUT,20,33).addItemStack(items1);
-        builder.addSlot(RecipeIngredientRole.INPUT,20,52).addItemStack(items2);
+        if (ingredients.size()>1) {
+            ItemStack items2 = new ItemStack(ingredients.get(1).getItems()[0].getItem());
+            items2.setCount(amount[1]);
+            builder.addSlot(RecipeIngredientRole.INPUT,20,52).addItemStack(items2);
+        }
         builder.addSlot(RecipeIngredientRole.OUTPUT,143,33).addItemStack(recipe.getResultItem());
 
     }

@@ -1,0 +1,17 @@
+{
+  "type": "timberframemod:wood_working",
+  "slot1": {
+    "count": 1,
+    "ingredients": [{
+      "tag": "minecraft:planks"
+    }
+    ]
+  },
+  "slot2": {
+    "count": 0,
+    "ingredients": [
+    ]
+  },
+  "result": "timberframemod:frame_basic",
+  "count": 1
+}

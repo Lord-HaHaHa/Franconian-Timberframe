@@ -35,16 +35,27 @@ public class WoodworkingBenchRecipe extends SingleItemRecipe {
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> nonnulllist = NonNullList.create();
         nonnulllist.add(this.ingredient);
-        nonnulllist.add(this.ingredientExtra);
+        if (this.ingredientExtra != null)
+        {
+            nonnulllist.add(this.ingredientExtra);
+        }
         return nonnulllist;
     }
 
     public boolean matches(Container container, Level level) {
         ItemStack itemStack1 = container.getItem(0);
         ItemStack itemStack2 = container.getItem(1);
-        boolean flag = (this.ingredient.test(itemStack1) && itemStack1.getCount() >= amountIngredient1) &&
-                (this.ingredientExtra.test(itemStack2) && itemStack2.getCount() >= amountIngredient2);
-        return flag;
+        if (this.ingredient.test(itemStack1) && itemStack1.getCount() >= amountIngredient1)
+        {
+          if (this.ingredientExtra != null)
+          {
+              return (this.ingredientExtra.test(itemStack2) && itemStack2.getCount() >= amountIngredient2);
+          } else {
+              return true;
+          }
+        } else {
+          return false;
+        }
     }
 
     public ItemStack getToastSymbol() {
@@ -75,7 +86,9 @@ public class WoodworkingBenchRecipe extends SingleItemRecipe {
             JsonObject ingredientOBJ2 = GsonHelper.getAsJsonObject(recipe, "slot2");
             JsonArray ingredients2 = GsonHelper.getAsJsonArray(ingredientOBJ2, "ingredients");
             int count2 = GsonHelper.getAsInt(ingredientOBJ2, "count");
-            Ingredient ingredient2 = Ingredient.fromJson(ingredients2);
+            Ingredient ingredient2 = null;
+            if (ingredients2.size()>0)
+              ingredient2 = Ingredient.fromJson(ingredients2);
 
             String s1 = GsonHelper.getAsString(recipe, "result");
             int resultCount = GsonHelper.getAsInt(recipe, "count");
@@ -85,20 +98,31 @@ public class WoodworkingBenchRecipe extends SingleItemRecipe {
 
         @Override
         public @Nullable WoodworkingBenchRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buff) {
+
             Ingredient ingredient = Ingredient.fromNetwork(buff);
-            Ingredient ingredientExtra = Ingredient.fromNetwork(buff);
             int amountIngredient1 = buff.readInt();
-            int amountIngredient2 = buff.readInt();
+
+            Ingredient ingredientExtra = null;
+            int amountIngredient2 = 0;
+            if (buff.readBoolean()) {
+                ingredientExtra = Ingredient.fromNetwork(buff);
+                amountIngredient2 = buff.readInt();
+            }
+
             ItemStack itemStack = buff.readItem();
+
             return new WoodworkingBenchRecipe(id, "wood_working", ingredient, ingredientExtra, itemStack, amountIngredient1, amountIngredient2);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buff, WoodworkingBenchRecipe recipe) {
             recipe.ingredient.toNetwork(buff);
-            recipe.ingredientExtra.toNetwork(buff);
             buff.writeInt(recipe.amountIngredient1);
-            buff.writeInt(recipe.amountIngredient2);
+            buff.writeBoolean(recipe.ingredientExtra!=null);
+            if (recipe.ingredientExtra!=null){
+                recipe.ingredientExtra.toNetwork(buff);
+                buff.writeInt(recipe.amountIngredient2);
+            }
             buff.writeItem(recipe.result);
         }
     }
