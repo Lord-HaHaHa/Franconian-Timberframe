@@ -28,7 +28,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '17'
-        distribution: 'microsoft'
+        distribution: 'adopt'
         cache: 'gradle'
     - name: Validate no assets
       run: test ! -d ./src/generated
