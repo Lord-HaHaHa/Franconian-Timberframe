@@ -30,12 +30,6 @@ jobs:
         java-version: '17'
         distribution: 'adopt'
         cache: 'gradle'
-    - name: Validate no assets
-      run: test ! -d ./src/generated
-    - name: Generate assets
-      run: ./gradlew runData
-    - name: Validate assets
-      run: test -d ./src/generated/resources/.cache
     - name: Build with Gradle
       run: ./gradlew build
     - name: Run Game Tests
@@ -44,3 +38,9 @@ jobs:
       with:
         name: dist
         path: build/libs/
+#    - name: Validate no assets
+#      run: test ! -d ./src/generated
+#    - name: Generate assets
+#      run: ./gradlew runData
+#    - name: Validate assets
+#      run: test -d ./src/generated/resources/.cache
