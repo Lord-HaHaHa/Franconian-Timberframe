@@ -3,17 +3,15 @@
   "slot1": {
     "count": 1,
     "ingredients": [{
-        "item": "timberframemod:wattle_daub"
+      "tag": "minecraft:planks"
       }
     ]
   },
   "slot2": {
-    "count": 4,
-    "ingredients": [{
-      "item": "minecraft:stick"
-    }
+    "count": 0,
+    "ingredients": [
     ]
   },
   "result": "timberframemod:block_shutter",
-  "count": 1
+  "count": 2
 }

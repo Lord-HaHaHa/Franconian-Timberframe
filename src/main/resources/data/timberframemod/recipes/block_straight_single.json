@@ -3,12 +3,12 @@
   "slot1": {
     "count": 1,
     "ingredients": [{
-        "item": "timberframemod:wattle_daub"
+        "item": "timberframemod:block_basic"
       }
     ]
   },
   "slot2": {
-    "count": 4,
+    "count": 1,
     "ingredients": [{
       "item": "minecraft:stick"
     }

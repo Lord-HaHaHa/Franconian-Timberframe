@@ -26,6 +26,8 @@ To install the Franconian Timber Frame Mod, follow these steps:
 
 To use the Franconian Timber Frame blocks, simply craft them like any other Minecraft block and place them in your structure. Use different variations of the blocks to create unique patterns and designs.
 
+Important: In order to be able to see all recipes, consider installing JEI. 
+
 # Conclusion #
 
 If you're looking to add some unique and decorative blocks to your Minecraft builds, the Franconian Timber Frame Mod is a great choice. With its multiple block variations and compatibility with other mods, you'll be able to create beautiful and unique structures in no time.

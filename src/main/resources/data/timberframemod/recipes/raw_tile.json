@@ -4,6 +4,10 @@
     {
       "item": "minecraft:clay_ball",
       "count": 1
+    },
+    {
+      "item": "timberframemod:frame_basic",
+      "count": 1
     }
   ],
   "result": {

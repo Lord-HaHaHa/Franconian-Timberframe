@@ -8,10 +8,8 @@
     ]
   },
   "slot2": {
-    "count": 4,
-    "ingredients": [{
-      "item": "minecraft:stick"
-    }
+    "count": 0,
+    "ingredients": [
     ]
   },
   "result": "timberframemod:block_plaster",
