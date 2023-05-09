@@ -34,7 +34,8 @@ jobs:
       uses: gradle/gradle-build-action@v2
       with:
         arguments: build --stacktrace --no-daemon    
-    - uses: actions/upload-artifact@v2
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
       with:
         name: dist
         path: build/libs/
