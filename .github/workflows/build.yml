@@ -35,7 +35,7 @@ jobs:
       with:
         arguments: build --stacktrace --no-daemon    
     - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: dist
         path: build/libs/
