@@ -6,9 +6,9 @@
         "facing=east,active=true":  { "model": "timberframemod:block/block_shutter", "y": 270 },
         "facing=west,active=true":  { "model": "timberframemod:block/block_shutter", "y": 90 },
 
-        "facing=south,active=false": { "model": "minecraft:block/oak_log" },
-        "facing=north,active=false": { "model": "minecraft:block/oak_log", "y": 180 },
-        "facing=east,active=false":  { "model": "minecraft:block/oak_log", "y": 270 },
-        "facing=west,active=false":  { "model": "minecraft:block/oak_log", "y": 90 }
+        "facing=south,active=false": { "model": "minecraft:block/air" },
+        "facing=north,active=false": { "model": "minecraft:block/air", "y": 180 },
+        "facing=east,active=false":  { "model": "minecraft:block/air", "y": 270 },
+        "facing=west,active=false":  { "model": "minecraft:block/air", "y": 90 }
     }
 }

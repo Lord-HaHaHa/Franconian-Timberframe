@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+      "item": "timberframemod:raw_tile"
+    },
+  "result": {
+    "item": "timberframemod:roof_tile",
+    "cookingtime": 100
+  }
+}

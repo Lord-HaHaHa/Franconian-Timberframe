@@ -1,0 +1,19 @@
+{
+  "type": "timberframemod:wood_working",
+  "slot1": {
+    "count": 1,
+    "ingredients": [{
+        "item": "minecraft:oak_slab"
+      }
+    ]
+  },
+  "slot2": {
+    "count": 3,
+    "ingredients": [{
+      "item": "minecraft:stick"
+    }
+    ]
+  },
+  "result": "timberframemod:block_overhang_rightstrut",
+  "count": 1
+}

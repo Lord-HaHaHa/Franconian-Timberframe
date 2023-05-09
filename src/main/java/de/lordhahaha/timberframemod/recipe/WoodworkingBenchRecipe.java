@@ -1,10 +1,12 @@
 package de.lordhahaha.timberframemod.recipe;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import de.lordhahaha.timberframemod.Timberframemod;
 import de.lordhahaha.timberframemod.block.ModBlocks;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -20,22 +22,40 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 public class WoodworkingBenchRecipe extends SingleItemRecipe {
-    public int amountIngredient1;
-    public int amountIngredient2;
-    public Ingredient ingredientExtra;
-    public WoodworkingBenchRecipe(ResourceLocation id, String group, Ingredient ingredientMain, Ingredient pingredientExtra, ItemStack itemStack, int amount1, int amount2) {
+    private int amountIngredient1;
+    private int amountIngredient2;
+    private Ingredient ingredientExtra;
+    public WoodworkingBenchRecipe(ResourceLocation id, String group, Ingredient ingredientMain, Ingredient ingredientExtra, ItemStack itemStack, int amount1, int amount2) {
         super(Type.INSTANCE, Serializer.INSTANCE, id, group, ingredientMain, itemStack);
         amountIngredient1 = amount1;
         amountIngredient2 = amount2;
-        ingredientExtra = pingredientExtra;
+        this.ingredientExtra = ingredientExtra;
     }
 
-    public boolean matches(Container container, Level p_44484_) {
+    public NonNullList<Ingredient> getIngredients() {
+        NonNullList<Ingredient> nonnulllist = NonNullList.create();
+        nonnulllist.add(this.ingredient);
+        if (this.ingredientExtra != null)
+        {
+            nonnulllist.add(this.ingredientExtra);
+        }
+        return nonnulllist;
+    }
+
+    public boolean matches(Container container, Level level) {
         ItemStack itemStack1 = container.getItem(0);
         ItemStack itemStack2 = container.getItem(1);
-        boolean flag = (this.ingredient.test(itemStack1) && itemStack1.getCount() >= amountIngredient1) &&
-                (this.ingredientExtra.test(itemStack2) && itemStack2.getCount() >= amountIngredient2);
-        return flag;
+        if (this.ingredient.test(itemStack1) && itemStack1.getCount() >= amountIngredient1)
+        {
+          if (this.ingredientExtra != null)
+          {
+              return (this.ingredientExtra.test(itemStack2) && itemStack2.getCount() >= amountIngredient2);
+          } else {
+              return true;
+          }
+        } else {
+          return false;
+        }
     }
 
     public ItemStack getToastSymbol() {
@@ -57,42 +77,52 @@ public class WoodworkingBenchRecipe extends SingleItemRecipe {
 
         @Override
         public WoodworkingBenchRecipe fromJson(ResourceLocation id, JsonObject recipe) {
-            int amounts[] = {0,0};
-            ArrayList<Ingredient> ingredients = new ArrayList<>();
-            if(GsonHelper.isArrayNode(recipe, "ingredient")){
-                JsonArray ingredientArray = GsonHelper.getAsJsonArray(recipe, "ingredient");
-                for(int i = 0; i <= ingredientArray.size()-1; i++){
-                    JsonObject ingredientObject = ingredientArray.get(i).getAsJsonObject();
-                    Ingredient ingredient = Ingredient.fromJson(ingredientObject);
-                    ingredients.add(ingredient);
-                    int amount = ingredientObject.get("count").getAsInt();
-                    amounts[i] = amount;
-                }
-                //ingredient = Ingredient.fromJson(GsonHelper.getAsJsonArray(recipe, "ingredient"));
-            }
+
+            JsonObject ingredientOBJ1 = GsonHelper.getAsJsonObject(recipe, "slot1");
+            JsonArray ingredients1 = GsonHelper.getAsJsonArray(ingredientOBJ1, "ingredients");
+            int count1 = GsonHelper.getAsInt(ingredientOBJ1, "count");
+            Ingredient ingredient1 = Ingredient.fromJson(ingredients1);
+
+            JsonObject ingredientOBJ2 = GsonHelper.getAsJsonObject(recipe, "slot2");
+            JsonArray ingredients2 = GsonHelper.getAsJsonArray(ingredientOBJ2, "ingredients");
+            int count2 = GsonHelper.getAsInt(ingredientOBJ2, "count");
+            Ingredient ingredient2 = null;
+            if (ingredients2.size()>0)
+              ingredient2 = Ingredient.fromJson(ingredients2);
 
             String s1 = GsonHelper.getAsString(recipe, "result");
             int resultCount = GsonHelper.getAsInt(recipe, "count");
             ItemStack itemStack = new ItemStack(Registry.ITEM.get(new ResourceLocation(s1)) , resultCount);
-            return new WoodworkingBenchRecipe(id, "wood_working", ingredients.get(0), ingredients.get(1), itemStack, amounts[0], amounts[1]);
+            return new WoodworkingBenchRecipe(id, "wood_working", ingredient1, ingredient2, itemStack, count1, count2);
         }
 
         @Override
         public @Nullable WoodworkingBenchRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buff) {
+
             Ingredient ingredient = Ingredient.fromNetwork(buff);
-            Ingredient ingredientExtra = Ingredient.fromNetwork(buff);
             int amountIngredient1 = buff.readInt();
-            int amountIngredient2 = buff.readInt();
+
+            Ingredient ingredientExtra = null;
+            int amountIngredient2 = 0;
+            if (buff.readBoolean()) {
+                ingredientExtra = Ingredient.fromNetwork(buff);
+                amountIngredient2 = buff.readInt();
+            }
+
             ItemStack itemStack = buff.readItem();
+
             return new WoodworkingBenchRecipe(id, "wood_working", ingredient, ingredientExtra, itemStack, amountIngredient1, amountIngredient2);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buff, WoodworkingBenchRecipe recipe) {
             recipe.ingredient.toNetwork(buff);
-            recipe.ingredientExtra.toNetwork(buff);
             buff.writeInt(recipe.amountIngredient1);
-            buff.writeInt(recipe.amountIngredient2);
+            buff.writeBoolean(recipe.ingredientExtra!=null);
+            if (recipe.ingredientExtra!=null){
+                recipe.ingredientExtra.toNetwork(buff);
+                buff.writeInt(recipe.amountIngredient2);
+            }
             buff.writeItem(recipe.result);
         }
     }

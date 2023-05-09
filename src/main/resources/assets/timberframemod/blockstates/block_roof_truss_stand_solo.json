@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "timberframemod:block/block_roof_truss_stand_solo" },
+        "facing=south": { "model": "timberframemod:block/block_roof_truss_stand_solo", "y": 180 },
+        "facing=west":  { "model": "timberframemod:block/block_roof_truss_stand_solo", "y": 270 },
+        "facing=east":  { "model": "timberframemod:block/block_roof_truss_stand_solo", "y": 90 }
+    }
+}

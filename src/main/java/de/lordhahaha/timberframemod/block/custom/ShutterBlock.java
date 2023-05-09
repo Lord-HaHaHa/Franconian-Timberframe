@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -59,7 +60,6 @@ public class ShutterBlock extends Block{
 
     public void setPlacedBy(Level level, BlockPos blockPos, BlockState blockState, LivingEntity p_52752_, ItemStack p_52753_) {
         if(blockState != null) {
-            Direction facing = blockState.getValue(FACING);
             level.setBlock(getConnectedShutter(blockPos, blockState), blockState
                             .setValue(FACING, blockState.getValue(FACING))
                             .setValue(ACTIVE, !blockState.getValue(ACTIVE))
@@ -79,16 +79,18 @@ public class ShutterBlock extends Block{
 
         if(neighbourBlockState.canBeReplaced(placeContext)) {
             BlockState newBlock = this.defaultBlockState();
-            boolean hasTop = hasTopShutterAndLink(newBlock, blockPos, level);
-            boolean hasBottom = hasBottomShutterAndLink(newBlock, blockPos, level);
             newBlock = newBlock
                     .setValue(FACING, placeContext.getHorizontalDirection().getOpposite())
                     .setValue(ACTIVE, Boolean.TRUE)
                     .setValue(OPEN, Boolean.TRUE)
-                    .setValue(CONNECTED_BLOCK, connecedBlock)
+                    .setValue(CONNECTED_BLOCK, connecedBlock);
+
+            boolean hasTop = hasTopShutterAndLink(newBlock, blockPos, level);
+            boolean hasBottom = hasBottomShutterAndLink(newBlock, blockPos, level);
+            newBlock = newBlock
+                    .setValue(NEIGHBOUR, linkToNeighbourShutter(newBlock, blockPos, level))
                     .setValue(HAS_TOP, hasTop)
                     .setValue(HAS_BOTTOM, hasBottom);
-            newBlock = newBlock.setValue(NEIGHBOUR, linkToNeighbourShutter(newBlock, blockPos, level));
 
             return newBlock;
         }
@@ -201,11 +203,12 @@ public class ShutterBlock extends Block{
             toggleShutterRow(neighbourShutterState, neighbourShutterPos, level);
         }
     }
-
     @Override
     public void playerWillDestroy(Level level, BlockPos blockPos, BlockState blockState, Player p_49855_) {
         BlockPos toDelete = getConnectedShutter(blockPos, blockState);
-        level.destroyBlock(toDelete, false);
+        Block air = Blocks.AIR;
+        level.setBlock(toDelete, air.defaultBlockState(), 3);
+        //level.destroyBlock(toDelete, false);
 
         // remove Neighbourshutter link in neighbour
         if(blockState.getValue(NEIGHBOUR) != Neighbour.NULL){
@@ -271,13 +274,13 @@ public class ShutterBlock extends Block{
     }
     private boolean hasTopShutterAndLink(BlockState blockState, BlockPos blockPos, Level level){
         BlockPos blockAbovePos = blockPos.above();
-        BlockState blockBelowState = level.getBlockState(blockAbovePos);
-        if(blockBelowState.getBlock() == blockState.getBlock()){
-            if(blockBelowState.getValue(CONNECTED_BLOCK) == blockState.getValue(CONNECTED_BLOCK)) {
-                level.setBlockAndUpdate(blockAbovePos, blockBelowState.setValue(HAS_BOTTOM, true));
-                blockAbovePos = getConnectedShutter(blockAbovePos, blockBelowState);
-                blockBelowState = level.getBlockState(blockAbovePos);
-                level.setBlockAndUpdate(blockAbovePos, blockBelowState.setValue(HAS_BOTTOM, true));
+        BlockState blockAboveState = level.getBlockState(blockAbovePos);
+        if(blockAboveState.getBlock() == blockState.getBlock()){
+            if(blockAboveState.getValue(CONNECTED_BLOCK) == blockState.getValue(CONNECTED_BLOCK)) {
+                level.setBlockAndUpdate(blockAbovePos, blockAboveState.setValue(HAS_BOTTOM, true));
+                blockAbovePos = getConnectedShutter(blockAbovePos, blockAboveState);
+                blockAboveState = level.getBlockState(blockAbovePos);
+                level.setBlockAndUpdate(blockAbovePos, blockAboveState.setValue(HAS_BOTTOM, true));
                 return true;
             }
         }

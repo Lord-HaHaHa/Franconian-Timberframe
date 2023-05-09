@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=south": { "model": "timberframemod:block/block_roof_outer" },
+        "facing=north": { "model": "timberframemod:block/block_roof_outer", "y": 180 },
+        "facing=east":  { "model": "timberframemod:block/block_roof_outer", "y": 270 },
+        "facing=west":  { "model": "timberframemod:block/block_roof_outer", "y": 90 }
+    }
+}

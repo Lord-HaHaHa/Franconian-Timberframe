@@ -1,0 +1,19 @@
+{
+  "type": "timberframemod:wood_working",
+  "slot1": {
+    "count": 6,
+    "ingredients": [{
+        "item": "timberframemod:roof_tile"
+      }
+    ]
+  },
+  "slot2": {
+    "count": 2,
+    "ingredients": [{
+      "tag": "minecraft:planks"
+    }
+    ]
+  },
+  "result": "timberframemod:block_roof_main",
+  "count": 4
+}

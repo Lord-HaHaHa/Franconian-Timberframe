@@ -1,20 +1,19 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "key": {
-    "x": {
-      "item": "minecraft:stick"
-    },
-    "o": {
-      "item": "timberframemod:wattle_daub"
-    }
+  "type": "timberframemod:wood_working",
+  "slot1": {
+    "count": 1,
+    "ingredients": [{
+        "item": "timberframemod:block_basic"
+      }
+    ]
   },
-  "pattern": [
-    "xox",
-    "oxo",
-    "oox"
-  ],
-  "result": {
-    "count": 4,
-    "item": "timberframemod:block_down"
-  }
+  "slot2": {
+    "count": 1,
+    "ingredients": [{
+      "item": "minecraft:stick"
+    }
+    ]
+  },
+  "result": "timberframemod:block_down",
+  "count": 1
 }

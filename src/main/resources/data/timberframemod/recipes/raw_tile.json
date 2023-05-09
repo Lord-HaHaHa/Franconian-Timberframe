@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:clay_ball",
+      "count": 1
+    },
+    {
+      "item": "timberframemod:frame_basic",
+      "count": 1
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "timberframemod:raw_tile"
+  }
+}

@@ -1,23 +1,19 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "key": {
-    "x": {
-      "item": "minecraft:stick"
-    },
-    "o": {
-      "item": "timberframemod:wattle_daub"
-    },
-    "p": {
-      "item": "minecraft:oak_planks"
-    }
+  "type": "timberframemod:wood_working",
+  "slot1": {
+    "count": 1,
+    "ingredients": [{
+      "item": "timberframemod:block_ceiling"
+      }
+    ]
   },
-  "pattern": [
-    "xxp",
-    "oop",
-    "oop"
-  ],
-  "result": {
-    "count": 4,
-    "item": "timberframemod:block_ceiling_edge"
-  }
+  "slot2": {
+    "count": 1,
+    "ingredients": [{
+      "tag": "minecraft:logs"
+    }
+    ]
+  },
+  "result": "timberframemod:block_ceiling_edge",
+  "count": 1
 }
