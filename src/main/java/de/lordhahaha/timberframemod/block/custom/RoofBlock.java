@@ -245,7 +245,22 @@ public class RoofBlock extends Block{
                 }
             }
             case(15):{
-                return blockState.setValue(STATE, STATE_CORNER_INNER);
+                // Try to rotate Block so its satifeys the inner-corner condition
+                for(int i = 0; i < 4; i = i+1)
+                {
+                    BlockPos blockPosBehind = blockPos.relative(blockState.getValue(FACING));
+                    BlockState blockStateBehind = level.getBlockState(blockPosBehind);
+
+                    BlockPos blockPosSide = blockPos.relative(blockState.getValue(FACING).getClockWise());
+                    BlockState blockStateClock = level.getBlockState(blockPos.relative(blockState.getValue(FACING).getClockWise()));
+
+                    if(blockPosBehind.relative(blockStateBehind.getValue(FACING).getOpposite()).equals(blockPosSide.relative(blockStateClock.getValue(FACING).getOpposite()))){
+                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getOpposite());
+                        return blockState.setValue(STATE, STATE_CORNER_INNER);
+                    }else {
+                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
+                    }
+                }
             }
         }
 
