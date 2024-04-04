@@ -6,10 +6,13 @@ import de.lordhahaha.timberframemod.item.ModItems;
 import de.lordhahaha.timberframemod.menu.ModMenuTypes;
 import de.lordhahaha.timberframemod.menu.WoodworkingBenchScreen;
 import de.lordhahaha.timberframemod.recipe.ModRecipes;
+import de.lordhahaha.timberframemod.tab.ModCreativeModeTab;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -36,11 +39,73 @@ public class Timberframemod
         ModMenuTypes.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
+
+        modEventBus.addListener(this::addCreative);
     }
     public static ResourceLocation asResource(String path) {
         return new ResourceLocation(MOD_ID, path);
     }
 
+    private void addCreative(CreativeModeTabEvent.BuildContents event) {
+        if(event.getTab()== ModCreativeModeTab.TIMBERFRAME_TAB){
+            // Register Items
+            event.accept(ModItems.WATTLE_DAUB);
+            event.accept(ModItems.FRAME_BASIC);
+            event.accept(ModItems.RAW_TILE);
+            event.accept(ModItems.ROOF_TILE);
+            event.accept(ModItems.CARPENTERS_HAMMER);
+            event.accept(ModItems.CARPENTERS_PLANE);
+            event.accept(ModItems.CARPENTERS_SAW);
+
+            // Register Blockitems
+            event.accept(ModBlocks.BLOCK_WOODWORKING_BENCH);
+            event.accept(ModBlocks.BLOCK_SHUTTER);
+            event.accept(ModBlocks.BLOCK_PLASTER);
+            event.accept(ModBlocks.BLOCK_BASIC);
+            event.accept(ModBlocks.BLOCK_DOWN);
+            event.accept(ModBlocks.BLOCK_UP);
+            event.accept(ModBlocks.BLOCK_CROSS);
+            event.accept(ModBlocks.BLOCK_CROSS_SMALL_STRAIGHT);
+            event.accept(ModBlocks.BLOCK_CROSS_SMALL_CURVED);
+            event.accept(ModBlocks.BLOCK_CROSS_RING);
+            event.accept(ModBlocks.BLOCK_STRAIGHT_SINGLE);
+            event.accept(ModBlocks.BLOCK_STRAIGHT_DOUBLE);
+            event.accept(ModBlocks.BLOCK_DOUBLE_DOWN);
+            event.accept(ModBlocks.BLOCK_DOUBLE_UP);
+            event.accept(ModBlocks.BLOCK_EDGE);
+            event.accept(ModBlocks.BLOCK_CEILING_EDGE);
+            event.accept(ModBlocks.BLOCK_CEILING);
+            event.accept(ModBlocks.BLOCK_HEXA);
+            event.accept(ModBlocks.BLOCK_MAN_LEFT);
+            event.accept(ModBlocks.BLOCK_MAN_RIGHT);
+            event.accept(ModBlocks.BLOCK_PEDIMENT_LEFT);
+            event.accept(ModBlocks.BLOCK_PEDIMENT_RIGHT);
+            event.accept(ModBlocks.BLOCK_OVERHANG);
+            event.accept(ModBlocks.BLOCK_OVERHANG_RIGHTSTRUT);
+            event.accept(ModBlocks.BLOCK_OVERHANG_LEFTSTRUT);
+            event.accept(ModBlocks.BLOCK_ROOF);
+            event.accept(ModBlocks.BLOCK_ROOF_INNER);
+            event.accept(ModBlocks.BLOCK_ROOF_OUTER);
+            event.accept(ModBlocks.BLOCK_ROOF_GABLE);
+            event.accept(ModBlocks.BLOCK_ROOF_TOP);
+            event.accept(ModBlocks.BLOCK_ROOF_TOP_2WAY);
+            event.accept(ModBlocks.BLOCK_ROOF_TOP_3WAY);
+            event.accept(ModBlocks.BLOCK_ROOF_TOP_CENTER);
+            event.accept(ModBlocks.BLOCK_ROOF_TOP_CROSS);
+            event.accept(ModBlocks.BLOCK_ROOF_TOP_END);
+            event.accept(ModBlocks.BLOCK_ROOF_MAIN);
+            event.accept(ModBlocks.BLOCK_ROOF_TRUSS_2WAY);
+            event.accept(ModBlocks.BLOCK_ROOF_TRUSS_3WAY);
+            event.accept(ModBlocks.BLOCK_ROOF_TRUSS_4WAY);
+            event.accept(ModBlocks.BLOCK_ROOF_TRUSS_EDGE);
+            event.accept(ModBlocks.BLOCK_ROOF_TRUSS_STAND_3WAY);
+            event.accept(ModBlocks.BLOCK_ROOF_TRUSS_STAND_2WAY);
+            event.accept(ModBlocks.BLOCK_ROOF_TRUSS_STAND_SOLO);
+            event.accept(ModBlocks.BLOCK_ROOF_TRUSS_STAND_EDGE);
+            event.accept(ModBlocks.BLOCK_WINDOW);
+
+        }
+    }
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientModEvents{
         @SubscribeEvent

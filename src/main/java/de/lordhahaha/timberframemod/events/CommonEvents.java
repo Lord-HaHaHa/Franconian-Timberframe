@@ -2,6 +2,7 @@ package de.lordhahaha.timberframemod.events;
 
 import de.lordhahaha.timberframemod.Timberframemod;
 import de.lordhahaha.timberframemod.foundation.ModFilePackResources;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
@@ -25,8 +26,11 @@ public class CommonEvents {
                 return;
             }
             IModFile modFile = modFileInfo.getFile();
-            event.addRepositorySource((consumer, constructor) -> {
-                consumer.accept(Pack.create(Timberframemod.asResource("timberframe_high").toString(), false, () -> new ModFilePackResources("Timberframe High", modFile, "resourcepacks/timberframe_high"), constructor, Pack.Position.TOP, PackSource.DEFAULT));
+            event.addRepositorySource(consumer -> {
+                Pack pack = Pack.readMetaAndCreate(Timberframemod.asResource("timberframe_high").toString(), Component.literal("Timberframe High"),false, id -> new ModFilePackResources(id, modFile, "resourcepacks/timberframe_high"), PackType.CLIENT_RESOURCES, Pack.Position.TOP, PackSource.DEFAULT);
+                if(pack != null) {
+                    consumer.accept(pack);
+                }
             });
         }
     }

@@ -12,10 +12,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.Container;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
+import net.minecraftforge.common.crafting.CraftingHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
@@ -91,11 +93,16 @@ public class WoodworkingBenchRecipe extends SingleItemRecipe {
               ingredient2 = Ingredient.fromJson(ingredients2);
 
             String s1 = GsonHelper.getAsString(recipe, "result");
-            int resultCount = GsonHelper.getAsInt(recipe, "count");
-            ItemStack itemStack = new ItemStack(Registry.ITEM.get(new ResourceLocation(s1)) , resultCount);
+            int resultCount = GsonHelper.getAsInt(recipe, "count", 1);
+            //ItemStack itemStack = new ItemStack(Registry.ITEM.get(new ResourceLocation(s1)) , resultCount);
+            System.out.println("------------------T R A C E--------------------");
+            System.out.println(recipe);
+            String outputItemName = GsonHelper.getAsString(recipe, "result");
+            ItemStack itemStack = new ItemStack(CraftingHelper.getItem(outputItemName, true), resultCount);
+
+            System.out.println(itemStack.getDisplayName());
             return new WoodworkingBenchRecipe(id, "wood_working", ingredient1, ingredient2, itemStack, count1, count2);
         }
-
         @Override
         public @Nullable WoodworkingBenchRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buff) {
 

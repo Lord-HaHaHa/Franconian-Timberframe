@@ -15,10 +15,11 @@ public class ModItems {
             DeferredRegister.create(ForgeRegistries.ITEMS, Timberframemod.MOD_ID);
 
     // Register all items of the Mod
-    public static final RegistryObject<Item> WATTLE_DAUB = ITEMS.register("wattle_daub", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
+    public static final RegistryObject<Item> WATTLE_DAUB = ITEMS.register("wattle_daub", () -> new Item(new Item.Properties()));
 
     // Frames
-    public static final RegistryObject<Item> FRAME_BASIC = ITEMS.register("frame_basic", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
+    public static final RegistryObject<Item> FRAME_BASIC = ITEMS.register("frame_basic", () -> new Item(new Item.Properties()));
+
     //public static final RegistryObject<Item> FRAME_DOWN = ITEMS.register("frame_down", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
     //public static final RegistryObject<Item> FRAME_UP = ITEMS.register("frame_up", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
     //public static final RegistryObject<Item> CROSS_FRAME = ITEMS.register("frame_cross", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
@@ -43,11 +44,11 @@ public class ModItems {
     //public static final RegistryObject<Item> FRAME_SHUTTER_RIGHT = ITEMS.register("frame_shutter_right", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
     //public static final RegistryObject<Item> FRAME_DOUBLE_UP = ITEMS.register("frame_double_up", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
     //public static final RegistryObject<Item> FRAME_DOUBLE_DOWN = ITEMS.register("frame_double_down", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
-    public static final RegistryObject<Item> RAW_TILE = ITEMS.register("raw_tile", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
-    public static final RegistryObject<Item> ROOF_TILE = ITEMS.register("roof_tile", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
-    public static final RegistryObject<Item> CARPENTERS_HAMMER = ITEMS.register("carpenters_hammer", () -> new AxeItem(Tiers.WOOD,1,-3f, new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB).durability(60)));
-    public static final RegistryObject<Item> CARPENTERS_PLANE = ITEMS.register("carpenters_plane", () -> new AxeItem(Tiers.IRON,1,-3f,new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB).durability(150)));
-    public static final RegistryObject<Item> CARPENTERS_SAW = ITEMS.register("carpenters_saw", () -> new AxeItem(Tiers.IRON,1,-3f,new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB).durability(150)));
+    public static final RegistryObject<Item> RAW_TILE = ITEMS.register("raw_tile", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ROOF_TILE = ITEMS.register("roof_tile", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> CARPENTERS_HAMMER = ITEMS.register("carpenters_hammer", () -> new AxeItem(Tiers.WOOD,1,-3f, new Item.Properties().durability(60)));
+    public static final RegistryObject<Item> CARPENTERS_PLANE = ITEMS.register("carpenters_plane", () -> new AxeItem(Tiers.IRON,1,-3f,new Item.Properties().durability(150)));
+    public static final RegistryObject<Item> CARPENTERS_SAW = ITEMS.register("carpenters_saw", () -> new AxeItem(Tiers.IRON,1,-3f,new Item.Properties().durability(150)));
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);
