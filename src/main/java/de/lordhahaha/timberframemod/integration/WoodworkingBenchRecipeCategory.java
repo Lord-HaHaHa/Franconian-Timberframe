@@ -21,13 +21,19 @@ public class WoodworkingBenchRecipeCategory implements IRecipeCategory<Woodworki
 
     public final static ResourceLocation UID = new ResourceLocation(Timberframemod.MOD_ID,"wood_working");
     public final static ResourceLocation TEXTURE = new ResourceLocation(Timberframemod.MOD_ID, "textures/gui/woodworking_jei.png");
+
+    // 1.20.1 Addions
+    public static final RecipeType<WoodworkingBenchRecipe> WOODWORKING_TYPE =
+            new RecipeType<>(UID, WoodworkingBenchRecipe.class);
+    //---
+
     private final IDrawable background;
     private final IDrawable icon;
 
     public WoodworkingBenchRecipeCategory(IGuiHelper helper)
     {
-        this.background=helper.createDrawable(TEXTURE,0,0,176,85);
-        this.icon=helper.createDrawableIngredient(VanillaTypes.ITEM_STACK,new ItemStack(ModBlocks.BLOCK_WOODWORKING_BENCH.get()));
+        this.background = helper.createDrawable(TEXTURE,0,0,176,85);
+        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK,new ItemStack(ModBlocks.BLOCK_WOODWORKING_BENCH.get()));
     }
     @Override
     public RecipeType<WoodworkingBenchRecipe> getRecipeType() {
@@ -61,7 +67,6 @@ public class WoodworkingBenchRecipeCategory implements IRecipeCategory<Woodworki
             items2.setCount(amount[1]);
             builder.addSlot(RecipeIngredientRole.INPUT,20,52).addItemStack(items2);
         }
-        builder.addSlot(RecipeIngredientRole.OUTPUT,143,33).addItemStack(recipe.getResultItem());
-
+        builder.addSlot(RecipeIngredientRole.OUTPUT,143,33).addItemStack(recipe.getResultItem(null));
     }
 }

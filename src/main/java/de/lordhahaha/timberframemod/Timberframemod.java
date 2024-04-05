@@ -9,15 +9,12 @@ import de.lordhahaha.timberframemod.recipe.ModRecipes;
 import de.lordhahaha.timberframemod.tab.ModCreativeModeTab;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
@@ -30,6 +27,8 @@ public class Timberframemod
     public Timberframemod()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        ModCreativeModeTab.register(modEventBus);
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -46,8 +45,8 @@ public class Timberframemod
         return new ResourceLocation(MOD_ID, path);
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event) {
-        if(event.getTab()== ModCreativeModeTab.TIMBERFRAME_TAB){
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if(event.getTab() == ModCreativeModeTab.TIMBERFRAME_TAB.get()){
             // Register Items
             event.accept(ModItems.WATTLE_DAUB);
             event.accept(ModItems.FRAME_BASIC);

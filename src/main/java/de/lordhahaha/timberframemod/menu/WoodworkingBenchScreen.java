@@ -1,10 +1,10 @@
 package de.lordhahaha.timberframemod.menu;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.lordhahaha.timberframemod.Timberframemod;
 import de.lordhahaha.timberframemod.recipe.WoodworkingBenchRecipe;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -38,30 +38,30 @@ public class WoodworkingBenchScreen extends AbstractContainerScreen<WoodworkingB
         --this.titleLabelY;
     }
 
-    public void render(PoseStack p_99337_, int p_99338_, int p_99339_, float p_99340_) {
+    public void render(GuiGraphics p_99337_, int p_99338_, int p_99339_, float p_99340_) {
         super.render(p_99337_, p_99338_, p_99339_, p_99340_);
         this.renderTooltip(p_99337_, p_99338_, p_99339_);
     }
 
-    protected void renderBg(PoseStack p_99328_, float p_99329_, int p_99330_, int p_99331_) {
-        this.renderBackground(p_99328_);
+    protected void renderBg(GuiGraphics guiGraphics, float p_99329_, int p_99330_, int p_99331_) {
+        this.renderBackground(guiGraphics);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, BG_LOCATION);
         int i = this.leftPos;
         int j = this.topPos;
-        this.blit(p_99328_, i, j, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(BG_LOCATION, i, j, 0, 0, this.imageWidth, this.imageHeight);
         int k = (int)(41.0F * this.scrollOffs);
-        this.blit(p_99328_, i + 119, j + 15 + k, 176 + (this.isScrollBarActive() ? 0 : 12), 0, 12, 15);
+        guiGraphics.blit(BG_LOCATION, i + 119, j + 15 + k, 176 + (this.isScrollBarActive() ? 0 : 12), 0, 12, 15);
         int l = this.leftPos + 52;
         int i1 = this.topPos + 14;
         int j1 = this.startIndex + 12;
-        this.renderButtons(p_99328_, p_99330_, p_99331_, l, i1, j1);
-        this.renderRecipes(l, i1, j1);
+        this.renderButtons(guiGraphics, p_99330_, p_99331_, l, i1, j1);
+        this.renderRecipes(guiGraphics, l, i1, j1);
     }
 
-    protected void renderTooltip(PoseStack p_99333_, int p_99334_, int p_99335_) {
-        super.renderTooltip(p_99333_, p_99334_, p_99335_);
+    protected void renderTooltip(GuiGraphics guiGraphics, int p_99334_, int p_99335_) {
+        super.renderTooltip(guiGraphics, p_99334_, p_99335_);
         if (this.displayRecipes) {
             int i = this.leftPos + 52;
             int j = this.topPos + 14;
@@ -73,14 +73,14 @@ public class WoodworkingBenchScreen extends AbstractContainerScreen<WoodworkingB
                 int j1 = i + i1 % 4 * 16;
                 int k1 = j + i1 / 4 * 18 + 2;
                 if (p_99334_ >= j1 && p_99334_ < j1 + 16 && p_99335_ >= k1 && p_99335_ < k1 + 18) {
-                    this.renderTooltip(p_99333_, list.get(l).getResultItem(), p_99334_, p_99335_);
+                    guiGraphics.renderTooltip(this.font, list.get(l).getResultItem(this.minecraft.level.registryAccess()), p_99334_, p_99335_);
                 }
             }
         }
 
     }
 
-    private void renderButtons(PoseStack p_99342_, int p_99343_, int p_99344_, int p_99345_, int p_99346_, int p_99347_) {
+    private void renderButtons(GuiGraphics guiGraphics, int p_99343_, int p_99344_, int p_99345_, int p_99346_, int p_99347_) {
         for(int i = this.startIndex; i < p_99347_ && i < this.menu.getNumRecipes(); ++i) {
             int j = i - this.startIndex;
             int k = p_99345_ + j % 4 * 16;
@@ -93,21 +93,20 @@ public class WoodworkingBenchScreen extends AbstractContainerScreen<WoodworkingB
                 j1 += 36;
             }
 
-            this.blit(p_99342_, k, i1 - 1, 0, j1, 16, 18);
+            guiGraphics.blit(BG_LOCATION, k, i1 - 1, 0, j1, 16, 18);
         }
 
     }
 
-    private void renderRecipes(int p_99349_, int p_99350_, int p_99351_) {
+    private void renderRecipes(GuiGraphics guiGraphics,int p_99349_, int p_99350_, int p_99351_) {
         List<WoodworkingBenchRecipe> list = this.menu.getRecipes();
         for(int i = this.startIndex; i < p_99351_ && i < this.menu.getNumRecipes(); ++i) {
             int j = i - this.startIndex;
             int k = p_99349_ + j % 4 * 16;
             int l = j / 4;
             int i1 = p_99350_ + l * 18 + 2;
-            this.minecraft.getItemRenderer().renderAndDecorateItem(list.get(i).getResultItem(), k, i1);
+            guiGraphics.renderItem(list.get(i).getResultItem(this.minecraft.level.registryAccess()), k, i1);
         }
-
     }
 
     public boolean mouseClicked(double p_99318_, double p_99319_, int p_99320_) {

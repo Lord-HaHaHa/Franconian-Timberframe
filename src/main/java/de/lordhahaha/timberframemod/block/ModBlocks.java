@@ -2,7 +2,6 @@ package de.lordhahaha.timberframemod.block;
 
 import de.lordhahaha.timberframemod.Timberframemod;
 import de.lordhahaha.timberframemod.block.custom.*;
-import de.lordhahaha.timberframemod.tab.ModCreativeModeTab;
 import de.lordhahaha.timberframemod.item.ModItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -10,7 +9,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -23,11 +21,10 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, Timberframemod.MOD_ID);
 
     // Define Material with values
-    private static final BlockBehaviour.Properties TimberframeMaterial = BlockBehaviour.Properties.of(Material.WOOD).strength(2.0F, 3.0F).sound(SoundType.WOOD);
+    private static final BlockBehaviour.Properties TimberframeMaterial = BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).strength(2.0F, 3.0F).sound(SoundType.WOOD);
 
 
-    //public static final Block WORKING_TABLE = new WorkingTableBlock(AbstractBlock.Settings.copy(Blocks.CRAFTING_TABLE).sounds(BlockSoundGroup.WOOD));
-    public static final RegistryObject<Block> BLOCK_WOODWORKING_BENCH = registerBlock("block_woodworking_bench", () -> new WoodworkingBenchBlock(TimberframeMaterial.noOcclusion()) {});
+    public static final RegistryObject<Block> BLOCK_WOODWORKING_BENCH = registerBlock("block_woodworking_bench", () -> new WoodworkingBenchBlock(TimberframeMaterial.noOcclusion()));
     // Register all new blocks
     public static final RegistryObject<Block> BLOCK_SHUTTER = registerBlock("block_shutter", () -> new ShutterBlock(TimberframeMaterial.noOcclusion()) {});
     public static final RegistryObject<Block> BLOCK_PLASTER = registerBlock("block_plaster", () -> new RotationalBlock(TimberframeMaterial) {});
@@ -86,7 +83,7 @@ public class ModBlocks {
     }
 
     // Create and Register the Blockitem for a given Block
-    private static <T extends Block> RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block){
+    private static <T extends Block> RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block) {
         return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 

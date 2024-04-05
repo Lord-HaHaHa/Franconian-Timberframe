@@ -53,7 +53,7 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
     public WoodworkingBenchMenu(int id, Inventory inventory, final ContainerLevelAccess containerLevelAccess) {
         super(ModMenuTypes.WOODWORKING_MENU.get(), id);
         this.access = containerLevelAccess;
-        this.level = inventory.player.level;
+        this.level = inventory.player.level();
 
         // Add Inventory Slots
         for(int i = 0; i < 3; ++i) {
@@ -74,12 +74,10 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
             }
 
             public void onTake(Player player, ItemStack itemStack) {
-                itemStack.onCraftedBy(player.level, player, itemStack.getCount());
-                WoodworkingBenchMenu.this.resultContainer.awardUsedRecipes(player);
-
+                itemStack.onCraftedBy(player.level(), player, itemStack.getCount());
                 WoodworkingBenchRecipe recipe = recipes.get(getSelectedRecipeIndex());
 
-                int[] amounts=recipe.getIngredientsAmount();
+                int[] amounts = recipe.getIngredientsAmount();
                 ItemStack itemstack = WoodworkingBenchMenu.this.inputSlotBlock.remove(amounts[0]);
                 ItemStack itemStackExtra = WoodworkingBenchMenu.this.inputSlotExtra.remove(amounts[1]);
 
@@ -90,7 +88,7 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
                 containerLevelAccess.execute((p_40364_, p_40365_) -> {
                     long l = p_40364_.getGameTime();
                     if (WoodworkingBenchMenu.this.lastSoundTime != l) {
-                        p_40364_.playSound((Player)null, p_40365_, SoundEvents.UI_STONECUTTER_TAKE_RESULT, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        p_40364_.playSound((Player) null, p_40365_, SoundEvents.UI_STONECUTTER_TAKE_RESULT, SoundSource.BLOCKS, 1.0F, 1.0F);
                         WoodworkingBenchMenu.this.lastSoundTime = l;
                     }
 
@@ -152,7 +150,7 @@ public class WoodworkingBenchMenu extends AbstractContainerMenu {
         if (!this.recipes.isEmpty() && this.isValidRecipeIndex(this.selectedRecipeIndex.get())) {
             WoodworkingBenchRecipe woodworkingBenchRecipe = this.recipes.get(this.selectedRecipeIndex.get());
             this.resultContainer.setRecipeUsed(woodworkingBenchRecipe);
-            this.resultSlot.set(woodworkingBenchRecipe.assemble(getInputContainer()));
+            this.resultSlot.set(woodworkingBenchRecipe.assemble(getInputContainer(), this.level.registryAccess()));
         } else {
             this.resultSlot.set(ItemStack.EMPTY);
         }
