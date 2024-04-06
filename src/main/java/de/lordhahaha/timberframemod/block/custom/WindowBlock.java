@@ -22,7 +22,7 @@ import java.text.MessageFormat;
 
 public class WindowBlock extends RotationalBlock {
 
-    public static final IntegerProperty STATE = IntegerProperty.create("state", 0, 16);
+    public static final IntegerProperty STATE = IntegerProperty.create("state", 0, 15);
 
     public WindowBlock(Properties properties) {
         super(properties);
