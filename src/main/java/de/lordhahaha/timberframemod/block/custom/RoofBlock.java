@@ -150,6 +150,7 @@ public class RoofBlock extends Block{
                 //System.out.println(state);
                 level.setBlockAndUpdate(blockPos, blockState);
             }
+            return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
@@ -204,8 +205,6 @@ public class RoofBlock extends Block{
         ROOF_BLOCK = ModBlocks.BLOCK_ROOF_MAIN.get();
         BlockState blockStateOld = blockState;
         int neighbor = getNeighborIndex(level, blockState, blockPos, 0);
-        System.out.println("Check For Corner NEW:");
-        System.out.println(neighbor);
         switch (neighbor) {
             case (6):
                 blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
