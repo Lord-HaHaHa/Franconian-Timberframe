@@ -27,6 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 public class RoofBlock extends Block{
@@ -40,6 +41,10 @@ public class RoofBlock extends Block{
     static final int STATE_TOP_T = 7;
     static final int STATE_TOP_L = 8;
     static final int STATE_TOP_CENTER = 9;
+    static final int NEIGHBOUR_LEFT = 1;
+    static final int NEIGHBOUR_RIGHT = 2;
+    static final Set<Integer> NON_CORNER_ROOFS = Set.of(STATE_ROOF, STATE_GABLE);
+    static final Set<Integer> CORNER_ROOFS = Set.of(STATE_CORNER_OUTER, STATE_CORNER_INNER);
 
     private static final VoxelShape TOP_SHAPE = Block.box(0,0,0,16,5,16);
     private static final VoxelShape BASE_SHAPE = Block.box(0,0,0,16,8,16);
@@ -119,7 +124,7 @@ public class RoofBlock extends Block{
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         ItemStack held = player.getItemInHand(interactionHand);
-
+        ROOF_BLOCK = ModBlocks.BLOCK_ROOF_MAIN.get();
         if (!level.isClientSide()) {
             //run on server only
 
@@ -150,6 +155,10 @@ public class RoofBlock extends Block{
                 //System.out.println(state);
                 level.setBlockAndUpdate(blockPos, blockState);
             }
+            // Only for debugging
+            else if(held.getItem() == ModItems.CARPENTERS_SAW.get()){
+                System.out.println("ROOF IN LINE " + roofInLine(blockState.getValue(FACING), level, blockPos));
+            }
             return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
@@ -160,7 +169,7 @@ public class RoofBlock extends Block{
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         Level level = context.getLevel();
         BlockPos blockPos = context.getClickedPos();
-
+        ROOF_BLOCK = ModBlocks.BLOCK_ROOF_MAIN.get();
         BlockState blockState = this.defaultBlockState()
                 .setValue(FACING, context.getHorizontalDirection())
                 .setValue(FACING_ORG, context.getHorizontalDirection())
@@ -174,11 +183,53 @@ public class RoofBlock extends Block{
         return blockState;
     }
 
-
+    private void updateBlockIfChaged(BlockState newBlockState, BlockState oldBlockState, Level level, BlockPos blockPos) {
+        if(!newBlockState.equals(oldBlockState)){
+            level.setBlockAndUpdate(blockPos, newBlockState);
+        }
+    }
     @Override
-    public void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, BlockPos blockPosNeighbor, boolean bool) {
+    public void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block replacedBlock, BlockPos blockPosNeighbor, boolean bool) {
+        super.neighborChanged(blockState, level, blockPos, replacedBlock, blockPosNeighbor, bool);
+        ROOF_BLOCK = ModBlocks.BLOCK_ROOF_MAIN.get();
+
+        BlockState blockStateBackup = blockState;
+        Direction facingSelf = blockState.getValue(FACING);
+
+        System.out.println("NeighborChanged");
+        System.out.println("BlockState Self: " + blockState);
+        System.out.println("BlockPos Self: " + blockPos);
+        System.out.println("Replaced Block: " + replacedBlock);
+        System.out.println("Block Pos Changed: " + blockPosNeighbor);
+        System.out.println("unknown Bool: " + bool);
+
+        // No Update if Block was changed with a tool
+        if(blockState.getValue(MANUAL))
+            return;
+
+        // Check if Block is now inline
+        if(roofInLine(blockState, level, blockPos) && false) {
+            blockState = blockState.setValue(STATE, STATE_GABLE);
+            blockState = blockState.setValue(FACING, blockState.getValue(FACING_ORG));
+            updateBlockIfChaged(blockState, blockStateBackup, level, blockPos);
+            return;
+        }
+
+        // Check if Block is now a Corner
+        blockState = checkForCornerPlacement(blockState, level, blockPos);
+        updateBlockIfChaged(blockState, blockStateBackup, level, blockPos);
+
+    }
+    public void neighborChangedOLD(BlockState blockState, Level level, BlockPos blockPos, Block block, BlockPos blockPosNeighbor, boolean bool) {
         super.neighborChanged(blockState, level, blockPos, block, blockPosNeighbor, bool);
         BlockState blockStateBackup = blockState;
+
+        System.out.println("NeighborChanged");
+        System.out.println("BlockState Self: " + blockState);
+        System.out.println("BlockPos Self: " + blockPos);
+        System.out.println("Block Self: " + block);
+        System.out.println("Block Pos Changed: " + blockPosNeighbor);
+        System.out.println("unknown Bool: " + bool);
 
         if(!(blockState.getValue(MANUAL))){
             if(block.equals(Blocks.AIR) || block.equals(ROOF_BLOCK)){
@@ -191,7 +242,15 @@ public class RoofBlock extends Block{
             }
 
             if(block.equals(Blocks.AIR)) { // Only check if a new block is placed
-                blockState = checkForCorner(blockState, level, blockPos);
+                Direction facingSelf = blockState.getValue(FACING);
+                if(roofInLine(facingSelf, level, blockPos)){
+                    Direction inLineFacing = getRelativeFacing(facingSelf.getClockWise(), level, blockPos);
+                    blockState = blockState.setValue(STATE, STATE_ROOF);
+                    if(inLineFacing != null)
+                            blockState = blockState.setValue(FACING, getRelativeFacing(facingSelf.getClockWise(), level, blockPos));
+                } else {
+                    blockState = checkForCornerPlacement(blockState, level, blockPos);
+                }
             }
         }
 
@@ -202,24 +261,80 @@ public class RoofBlock extends Block{
         }
     }
 
+    private Direction getRelativeFacing(Direction facingRelative, Level level, BlockPos blockPos){
+        BlockPos blockPosRelative = blockPos.relative(facingRelative);
+        BlockState blockStateRelative = level.getBlockState(blockPosRelative);
+        if(blockStateRelative.getBlock().equals(ROOF_BLOCK))
+            return blockStateRelative.getValue(FACING);
+        return null;
+    }
+
+    private int getRelativeState(Direction facingRelative, Level level, BlockPos blockPos){
+        BlockPos blockPosRelative = blockPos.relative(facingRelative);
+        BlockState blockStateRelative = level.getBlockState(blockPosRelative);
+        if(blockStateRelative.getBlock().equals(ROOF_BLOCK))
+            return blockStateRelative.getValue(STATE);
+        return -1;
+    }
+
+    private boolean roofInLine(BlockState blockState, Level level, BlockPos blockPos) {
+        return roofInLine(blockState.getValue(FACING), level, blockPos) ||
+                roofInLine(blockState.getValue(FACING_ORG), level, blockPos);
+    }
+    /**
+     * @param facingSelf facing of the Roof Block
+     * @param side 1=Left Neighbour, 2=Right Neighbour
+     * @param blockPos Position of the Block
+     * @return the Roofblock is in a line with its left and right neighbour
+     */
+    private boolean roofHasCorrectNeighbour(Direction facingSelf, int side, Level level, BlockPos blockPos){
+        Direction neighbourDirection;
+        if(side == NEIGHBOUR_LEFT){
+            neighbourDirection = facingSelf.getCounterClockWise();
+        }
+        else if (side == NEIGHBOUR_RIGHT) {
+            neighbourDirection = facingSelf.getClockWise();
+        } else
+            return false;
+
+        Direction facingNeighbour = getRelativeFacing(neighbourDirection, level, blockPos);
+        int stateNeighbour = getRelativeState(neighbourDirection, level, blockPos);
+        if(stateNeighbour == -1){
+            return false;
+        }
+
+        if(NON_CORNER_ROOFS.contains(stateNeighbour)) {
+            return facingNeighbour == facingSelf;
+        }
+
+        if (CORNER_ROOFS.contains(stateNeighbour)) {
+            Direction facing_horizontal = facingNeighbour.getClockWise();
+            if(side == NEIGHBOUR_LEFT) {
+                if(stateNeighbour == STATE_CORNER_INNER)
+                    return(facing_horizontal == facingSelf);
+                else if(stateNeighbour == STATE_CORNER_OUTER)
+                    return(facingNeighbour == facingSelf);
+            } else {
+                if(stateNeighbour == STATE_CORNER_INNER)
+                    return (facingNeighbour == facingSelf);
+                else if(stateNeighbour == STATE_CORNER_OUTER)
+                    return (facing_horizontal == facingSelf);
+            }
+        }
+        return false;
+    }
     /**
      * @param facingSelf facing of the Roof Block
      * @param level
      * @param blockPos Position of the Block
      * @return the Roofblock is in a line with its left and right neighbour
      */
-    private boolean roofInLine(Direction facingSelf, Level level, BlockPos blockPos) {
-        // New Block cant be a corner if he is in line with its left and right neighbour
-        BlockPos blockPosClockwise = blockPos.relative(facingSelf.getClockWise());
-        BlockState blockStateClockwise = level.getBlockState(blockPosClockwise);
-        BlockPos blockPosCounterClockwise = blockPos.relative(facingSelf.getCounterClockWise());
-        BlockState blockStateCounterClockwise = level.getBlockState(blockPosCounterClockwise);
-        if(blockStateClockwise.getBlock().equals(ROOF_BLOCK) && blockStateCounterClockwise.getBlock().equals(ROOF_BLOCK))
-            return facingSelf == blockStateClockwise.getValue(FACING) &&
-                    facingSelf == blockStateCounterClockwise.getValue(FACING);
-        return false;
-    }
+    private boolean roofInLine(Direction facingSelf, Level level, BlockPos blockPos){
+        boolean leftNeighbourCorrect = roofHasCorrectNeighbour(facingSelf, 1, level , blockPos);
+        boolean rightNeighbourCorrect = roofHasCorrectNeighbour(facingSelf, 2, level , blockPos);
 
+        return (leftNeighbourCorrect && rightNeighbourCorrect);
+    }
     public BlockState checkForCornerPlacement(BlockState blockState, Level level, BlockPos blockPos) {
         ROOF_BLOCK = ModBlocks.BLOCK_ROOF_MAIN.get();
         BlockState blockStateOld = blockState;
@@ -237,7 +352,8 @@ public class RoofBlock extends Block{
             Direction facingBehind = blockStateBehind.getValue(FACING_ORG);
 
             if(facingSelf == facingBehind.getCounterClockWise()) {
-                blockState = blockState.setValue(STATE, STATE_CORNER_OUTER);
+                if(blockStateBehind.getValue(STATE) != STATE_CORNER_INNER)
+                    blockState = blockState.setValue(STATE, STATE_CORNER_OUTER);
                 return blockState;
             }
             if (facingSelf == facingBehind.getClockWise()) {
@@ -274,7 +390,9 @@ public class RoofBlock extends Block{
         // cant be a Corner when in line
         if(roofInLine(facingSelf, level, blockPos))
             return blockStateOld;
-        
+
+        //
+
         return blockStateOld;
     }
     public BlockState checkForCorner(BlockState blockState, Level level, BlockPos blockPos) {
