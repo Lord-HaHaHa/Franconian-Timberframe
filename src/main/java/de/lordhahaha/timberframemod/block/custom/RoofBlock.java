@@ -303,14 +303,13 @@ public class RoofBlock extends Block{
 
     private boolean roofHasCorrectNeighbour(Direction facingSelf, int side, Level level, BlockPos blockPos){
         Direction neighbourDirection;
-        if(side == NEIGHBOUR_LEFT){
+        if(side == NEIGHBOUR_LEFT) {
             neighbourDirection = facingSelf.getCounterClockWise();
-        }
-        else if (side == NEIGHBOUR_RIGHT) {
+        } else if (side == NEIGHBOUR_RIGHT) {
             neighbourDirection = facingSelf.getClockWise();
         } else if(side == NEIGHBOUR_INFORNT) {
             neighbourDirection = facingSelf.getOpposite();
-        } else if(side == NEIGHBOUR_BEHIND){
+        } else if(side == NEIGHBOUR_BEHIND) {
             neighbourDirection = facingSelf;
         } else
             return false;
@@ -436,19 +435,20 @@ public class RoofBlock extends Block{
 
         if (blockStateInfront.getBlock().equals(ROOF_BLOCK)) {
             Direction facingInfront = blockStateInfront.getValue(FACING_ORG);
-
             if(facingSelf == facingInfront.getCounterClockWise() || facingSelf == facingInfront.getClockWise()) {
-                // guards for inner coner
-                if(blockStateInfront.getValue(STATE) == STATE_CORNER_OUTER && facingInfront != facingSelf)
+                // guards for inner corner
+                if(roofHasCorrectNeighbour(facingSelf, NEIGHBOUR_RIGHT, level, blockPos) &&
+                        facingSelf == facingInfront.getCounterClockWise())
+                    return blockState;
+                if(roofHasCorrectNeighbour(facingSelf, NEIGHBOUR_LEFT, level, blockPos) &&
+                        facingSelf == facingInfront.getClockWise())
                     return blockState;
 
-                // Change facing if the coner is not on the right side
-                // good but more bad than good
-                /*
+                // Change facing if the coner is left side
                 if (facingSelf == facingInfront.getClockWise()){
                     blockState = blockState.setValue(FACING, facingSelf.getCounterClockWise());
                 }
-                */
+
                 
                 blockState = blockState.setValue(STATE, STATE_CORNER_INNER);
 
@@ -716,7 +716,7 @@ public class RoofBlock extends Block{
 
     /**
      * @param level
-     * @param pos
+     * @param posr
      * @return 1 if neighbor is a roof_top type block, otherwise 0
      */
     private int getNeighbor(Level level, BlockPos pos, int state) {
