@@ -200,6 +200,8 @@ public class RoofBlock extends Block{
         return blockState;
     }
 
+
+
     private void updateBlockIfChaged(BlockState newBlockState, BlockState oldBlockState, Level level, BlockPos blockPos) {
         if(!newBlockState.equals(oldBlockState)){
             level.setBlockAndUpdate(blockPos, newBlockState);
@@ -284,12 +286,13 @@ public class RoofBlock extends Block{
 
         if(blockStateBehind.getBlock().equals(ROOF_BLOCK)) {
             Direction facingBehind = blockStateBehind.getValue(FACING_ORG);
-
+            
             if(facingSelf == facingBehind.getCounterClockWise()) {
                 if(blockStateBehind.getValue(STATE) != STATE_CORNER_INNER)
                     blockState = blockState.setValue(STATE, STATE_CORNER_OUTER);
                 return blockState;
             }
+
             if (facingSelf == facingBehind.getClockWise()) {
                 blockState = blockState.setValue(STATE, STATE_CORNER_OUTER);
                 blockState = blockState.setValue(FACING, facingSelf.getCounterClockWise());
@@ -305,9 +308,6 @@ public class RoofBlock extends Block{
         // and the block on its left is not a roof block
         BlockPos blockPosInfront = blockPos.relative(facingSelf.getOpposite());
         BlockState blockStateInfront = level.getBlockState(blockPosInfront);
-
-        BlockPos blockPosCounterClockwise = blockPos.relative(facingSelf.getCounterClockWise());
-        BlockState blockStateCounterClockwise = level.getBlockState(blockPosCounterClockwise);
 
         if (blockStateInfront.getBlock().equals(ROOF_BLOCK)) {
             Direction facingInfront = blockStateInfront.getValue(FACING_ORG);

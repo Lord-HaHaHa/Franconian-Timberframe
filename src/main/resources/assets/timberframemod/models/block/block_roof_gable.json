@@ -8,6 +8,7 @@
 		"3": "timberframemod:block/blank",
 		"particle": "timberframemod:block/roof_shingle"
 	},
+	"ambientocclusion": false,
 	"elements": [
 		{
 			"from": [0, -3, -0.1],
