@@ -171,6 +171,7 @@ public class RoofBlock extends Block{
             else if(held.getItem() == Items.STICK){
                 System.out.println("Block In line: " + roofInLine(blockState, level, blockPos));
                 System.out.println("Block In Corner: " + roofInCorner(blockState, level, blockPos));
+                System.out.println("Neighbor for TOP: " + getNeighborIndex(level, blockState, blockPos, STATE_TOP));
             }
             return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
         }
@@ -582,7 +583,7 @@ public class RoofBlock extends Block{
                     }
                 }
             }
-        }else {
+        } else {
             // Check if Block is a Top-Center Block (all side are roofs)
             if(neighbor == 15){
                 if(blockState.getValue(STATE) != STATE_TOP_CROSS){
@@ -623,18 +624,28 @@ public class RoofBlock extends Block{
                     if(neighbor == 3 || neighbor == 6 || neighbor == 12 || neighbor == 9){ // Check if Block has 2 neighbors
                         {
                             if(blockState.getValue(STATE) != STATE_TOP_L){
+                                // Reset earlier Rotations
+                                if(blockState.getValue(FACING) != blockState.getValue(FACING_ORG)) {
+                                    blockState = blockState.setValue(FACING, blockState.getValue(FACING_ORG));
+                                }
+                                neighbor = getNeighborIndex(level, blockState, blockPos, STATE_TOP);
+
+                                Direction facingSelf = blockState.getValue(FACING);
                                 // Rotate the Block depending on its neighbors
                                 switch (neighbor) {
                                     case(6): {
-                                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getCounterClockWise());
+                                        blockState = blockState.setValue(FACING, facingSelf.getClockWise());
                                         break;
                                     }
                                     case (12):{
-                                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getCounterClockWise().getCounterClockWise());
                                         break;
                                     }
                                     case (9): {
-                                        blockState = blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
+                                        blockState = blockState.setValue(FACING, facingSelf.getCounterClockWise());
+                                        break;
+                                    }
+                                    case (3): {
+                                        blockState = blockState.setValue(FACING, facingSelf.getOpposite());
                                         break;
                                     }
                                 }
