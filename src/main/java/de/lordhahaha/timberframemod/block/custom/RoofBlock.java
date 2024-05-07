@@ -160,14 +160,8 @@ public class RoofBlock extends Block{
                 //System.out.println(state);
                 level.setBlockAndUpdate(blockPos, blockState);
             }
-
             // Only for debugging
             // TODO Remove before release
-            else if(held.getItem() == ModItems.CARPENTERS_SAW.get()){
-                blockState = blockState.setValue(FACING, facingSelf.getClockWise());
-                level.setBlockAndUpdate(blockPos, blockState);
-
-            }
             else if(held.getItem() == Items.STICK){
                 System.out.println("Block In line: " + roofInLine(blockState, level, blockPos));
                 System.out.println("Block In Corner: " + roofInCorner(blockState, level, blockPos));

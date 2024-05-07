@@ -1,11 +1,13 @@
 package de.lordhahaha.timberframemod.block.custom;
 
 import de.lordhahaha.timberframemod.block.ModBlocks;
+import de.lordhahaha.timberframemod.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -35,15 +37,32 @@ public class OverhangBlock extends Block {
 
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        int i = 0;
-        if(blockState.getValue(STATE) >= 4)
-            i = 0;
-        else
-            i = blockState.getValue(STATE) + 1;
+        ItemStack held = player.getItemInHand(interactionHand);
+        if (held.getItem() == ModItems.CARPENTERS_HAMMER.get()) {
+            int i = 0;
 
-        System.out.println(i);
-        blockState = blockState.setValue(STATE, i);
-        level.setBlockAndUpdate(blockPos, blockState);
+            if(player.isCrouching()){
+                i = blockState.getValue(STATE) - 1;
+            } else {
+                i = blockState.getValue(STATE) + 1;
+            }
+
+            // Reset to 0 if State is over / underflowing
+            if(i >= 4 || i < 0)
+                i = 0;
+
+            blockState = blockState.setValue(STATE, i);
+            level.setBlockAndUpdate(blockPos, blockState);
+        }
+
+        if(held.getItem() == ModItems.CARPENTERS_HAMMER.get() && false) {
+            if(player.isCrouching()){
+                blockState.setValue(FACING, blockState.getValue(FACING).getCounterClockWise());
+            } else {
+                blockState.setValue(FACING, blockState.getValue(FACING).getClockWise());
+            }
+        }
+
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

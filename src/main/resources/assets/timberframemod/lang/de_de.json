@@ -9,6 +9,8 @@
 	"item.timberframemod.carpenters_plane": "Handwerkerhobel",
 	"item.timberframemod.carpenters_saw": "Handwerkersäge",
 
+	"tooltip.timberframemod.carpenters_hammer.tooltip" : "Rotiert den Block",
+
 	"block.timberframemod.block_woodworking_bench": "Fachwerkbank",
 	"block.timberframemod.block_shutter": "Fensterladen",
 	"block.timberframemod.block_plaster": "Putz",

@@ -1,10 +1,8 @@
 package de.lordhahaha.timberframemod.item;
 
 import de.lordhahaha.timberframemod.Timberframemod;
-import de.lordhahaha.timberframemod.tab.ModCreativeModeTab;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Tiers;
+import de.lordhahaha.timberframemod.item.custom.TimerframeSaw;
+import net.minecraft.world.item.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -48,7 +46,7 @@ public class ModItems {
     public static final RegistryObject<Item> ROOF_TILE = ITEMS.register("roof_tile", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> CARPENTERS_HAMMER = ITEMS.register("carpenters_hammer", () -> new AxeItem(Tiers.WOOD,1,-3f, new Item.Properties().durability(60)));
     public static final RegistryObject<Item> CARPENTERS_PLANE = ITEMS.register("carpenters_plane", () -> new AxeItem(Tiers.IRON,1,-3f,new Item.Properties().durability(150)));
-    public static final RegistryObject<Item> CARPENTERS_SAW = ITEMS.register("carpenters_saw", () -> new AxeItem(Tiers.IRON,1,-3f,new Item.Properties().durability(150)));
+    public static final RegistryObject<Item> CARPENTERS_SAW = ITEMS.register("carpenters_saw", () -> new TimerframeSaw(new Item.Properties().durability(150)));
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);
