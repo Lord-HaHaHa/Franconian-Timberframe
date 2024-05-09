@@ -46,9 +46,10 @@ public class RoofBlock extends Block{
     static final int NEIGHBOUR_RIGHT = 2;
     static final int NEIGHBOUR_INFORNT = 3;
     static final int NEIGHBOUR_BEHIND = 4;
-    static final Set<Integer> NON_CORNER_ROOFS = Set.of(STATE_ROOF, STATE_GABLE);
-    static final Set<Integer> CORNER_ROOFS = Set.of(STATE_CORNER_OUTER, STATE_CORNER_INNER);
-    static final Set<Integer> ROOFS_TOPS = Set.of(STATE_TOP, STATE_TOP_EDGE, STATE_TOP_CROSS, STATE_TOP_T, STATE_TOP_L, STATE_TOP_CENTER);
+    public static final Set<Integer> NON_CORNER_ROOFS = Set.of(STATE_ROOF, STATE_GABLE);
+    public static final Set<Integer> CORNER_ROOFS = Set.of(STATE_CORNER_OUTER, STATE_CORNER_INNER);
+    public static final Set<Integer> ROOF_SIDES = Set.of(STATE_ROOF, STATE_GABLE, STATE_CORNER_OUTER, STATE_CORNER_INNER);
+    public static final Set<Integer> ROOFS_TOPS = Set.of(STATE_TOP, STATE_TOP_EDGE, STATE_TOP_CROSS, STATE_TOP_T, STATE_TOP_L, STATE_TOP_CENTER);
 
     private static final VoxelShape TOP_SHAPE = Block.box(0,0,0,16,5,16);
     private static final VoxelShape BASE_SHAPE = Block.box(0,0,0,16,8,16);
@@ -129,40 +130,12 @@ public class RoofBlock extends Block{
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         ItemStack held = player.getItemInHand(interactionHand);
-        ROOF_BLOCK = ModBlocks.BLOCK_ROOF_MAIN.get();
         if (!level.isClientSide()) {
             //run on server only
-            Direction facingSelf = blockState.getValue(FACING);
 
-            if (held.getItem() == ModItems.CARPENTERS_HAMMER.get()) {
-                //first rotate. if block is NORTH, we change state
-                if (facingSelf.equals(Direction.NORTH)){
-                    int state = blockState.getValue(STATE);
-                    blockState = blockState.setValue(MANUAL, true);
-                    if (state < STATE_TOP) {
-                        state++;
-                        if (state >= STATE_TOP) {
-                            state = STATE_ROOF;
-                        }
-                    }
-                    if (state >= STATE_TOP) {
-                        state++;
-                        if (state >= STATE_TOP_CENTER) {
-                            state = STATE_TOP;
-                        }
-                    }
-                    blockState = blockState.setValue(STATE, state);
-                    blockState = blockState.setValue(FACING, Direction.NORTH.getClockWise());
-                } else {
-                    blockState = blockState.setValue(FACING, facingSelf.getClockWise());
-                }
-
-                //System.out.println(state);
-                level.setBlockAndUpdate(blockPos, blockState);
-            }
             // Only for debugging
             // TODO Remove before release
-            else if(held.getItem() == Items.STICK){
+            if(held.getItem() == Items.STICK){
                 System.out.println("Block In line: " + roofInLine(blockState, level, blockPos));
                 System.out.println("Block In Corner: " + roofInCorner(blockState, level, blockPos));
                 System.out.println("Neighbor for TOP: " + getNeighborIndex(level, blockState, blockPos, STATE_TOP));

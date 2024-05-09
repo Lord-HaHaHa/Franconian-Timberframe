@@ -1,7 +1,9 @@
 package de.lordhahaha.timberframemod.item;
 
 import de.lordhahaha.timberframemod.Timberframemod;
-import de.lordhahaha.timberframemod.item.custom.TimerframeSaw;
+import de.lordhahaha.timberframemod.item.custom.TimerframeToolItem;
+import de.lordhahaha.timberframemod.item.custom.timberframeToolItemActions.TimberframeToolItemActionChangeState;
+import de.lordhahaha.timberframemod.item.custom.timberframeToolItemActions.TimerframeToolItemActionRotate;
 import net.minecraft.world.item.*;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -44,9 +46,9 @@ public class ModItems {
     //public static final RegistryObject<Item> FRAME_DOUBLE_DOWN = ITEMS.register("frame_double_down", () -> new Item(new Item.Properties().tab(ModCreativeModeTab.TIMBERFRAME_TAB)));
     public static final RegistryObject<Item> RAW_TILE = ITEMS.register("raw_tile", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ROOF_TILE = ITEMS.register("roof_tile", () -> new Item(new Item.Properties()));
-    public static final RegistryObject<Item> CARPENTERS_HAMMER = ITEMS.register("carpenters_hammer", () -> new AxeItem(Tiers.WOOD,1,-3f, new Item.Properties().durability(60)));
+    public static final RegistryObject<Item> CARPENTERS_HAMMER = ITEMS.register("carpenters_hammer", () -> new TimerframeToolItem(new Item.Properties().durability(60), "tooltip.timberframemod.carpenters_hammer.tooltip", new TimberframeToolItemActionChangeState()));
     public static final RegistryObject<Item> CARPENTERS_PLANE = ITEMS.register("carpenters_plane", () -> new AxeItem(Tiers.IRON,1,-3f,new Item.Properties().durability(150)));
-    public static final RegistryObject<Item> CARPENTERS_SAW = ITEMS.register("carpenters_saw", () -> new TimerframeSaw(new Item.Properties().durability(150)));
+    public static final RegistryObject<Item> CARPENTERS_SAW = ITEMS.register("carpenters_saw", () -> new TimerframeToolItem(new Item.Properties().durability(150), "tooltip.timberframemod.carpenters_saw.tooltip", new TimerframeToolItemActionRotate()));
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);

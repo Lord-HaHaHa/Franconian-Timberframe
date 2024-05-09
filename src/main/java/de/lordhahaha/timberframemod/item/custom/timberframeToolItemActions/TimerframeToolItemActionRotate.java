@@ -1,44 +1,29 @@
-package de.lordhahaha.timberframemod.item.custom;
+package de.lordhahaha.timberframemod.item.custom.timberframeToolItemActions;
 
 import de.lordhahaha.timberframemod.block.custom.RoofBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Optional;
-
-public class TimerframeSaw extends DiggerItem {
-    public TimerframeSaw(Properties properties) {
-        super(1, -3f, Tiers.IRON, BlockTags.MINEABLE_WITH_AXE, properties);
-    }
-
+public class TimerframeToolItemActionRotate implements TimerframeToolItemAction {
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flags) {
-        components.add(Component.translatable("tooltip.timberframemod.carpenters_hammer.tooltip"));
-        super.appendHoverText(stack, level, components, flags);
-    }
-
-    @Override
-    public InteractionResult useOn(UseOnContext useOnContext) {
+    public InteractionResult useOnAction(UseOnContext useOnContext) {
         Level level = useOnContext.getLevel();
-        BlockPos blockpos = useOnContext.getClickedPos();
+        BlockPos blockPos = useOnContext.getClickedPos();
         Player player = useOnContext.getPlayer();
-        BlockState blockstate = level.getBlockState(blockpos);
+        BlockState blockState = level.getBlockState(blockPos);
+
         // Rotate RoofBlock
-        if (blockstate.getBlock() instanceof RoofBlock) {
-            BlockState rotatedState = rotateBlockState(blockstate, player.isCrouching());
-            level.setBlockAndUpdate(blockpos, rotatedState);
+        if (blockState.getBlock() instanceof RoofBlock) {
+            blockState = rotateBlockState(blockState, player.isCrouching());
+            blockState = blockState.setValue(RoofBlock.MANUAL, true);
+            level.setBlockAndUpdate(blockPos, blockState);
 
             return InteractionResult.SUCCESS;
         }
